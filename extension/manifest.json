@@ -1,0 +1,32 @@
+{
+  "manifest_version": 2,
+  "name": "Tripadvisor Gpx Grabber",
+  "description": "Grab POI from tripadvisor map to gpx file",
+  "version": "1.0",
+  "icons": {
+    "128": "images/mainIcon128.png"
+  },
+  "background": {
+    "scripts": [
+      "messages.js",
+      "chromeUtils.js",
+      "tripAdvisorListener.js",
+      "gpxGenerator.js",
+      "gpxManager.js",
+      "background.js"
+    ],
+    "persistent": true
+  },
+  "page_action": {
+    "default_icon": "images/pageActionIcon38.png",
+    "default_popup": "popup.html",
+    "default_title": "Grab points to gpx"
+  },
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "webRequest",
+    "downloads",
+    "*://*/GMapsLocationController?Action=display*"
+  ]
+}
