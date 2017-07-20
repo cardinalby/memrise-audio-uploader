@@ -1,44 +1,36 @@
-//noinspection JSCheckFunctionSignatures
+var popupContent =
+{
+    elements: {
+        startUploading: $("#start_uploading"),
+        uploadingInProgress: $("#uploading_in_progress"),
+        stopUploading: $("#stop_uploading"),
+        stoppingUploading: $("#stopping_uploading")
+    },
+
+    show: function (name) {
+        _.each(this.elements, function ($element, elementName) {
+            $element.show(name === elementName);
+        })
+    }
+};
+
+
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse)
 {
-    if (request.name == messages.GPX_CREATED)
-        onGpxCreated(request.links);
-
-    else if (request.name == messages.GPX_CREATION_FAILED)
-        onGpxCreationFailed(request.message);
+    switch (request.name)
+    {
+        case messages.UPLOADING_FINISHED: popupContent.show("startUploading"); break;
+    }
 });
 
-chrome.runtime.sendMessage({ name: messages.MAKE_GPX});
-
-function onGpxCreated(links) {
-
-    $('#loader').remove();
-    var linksDiv = $('.links');
-    
-    for (var i = 0; i < links.length; i++) {
-        (function () {
-            var link = links[i];
-
-            $("<a/>", {
-                href: '#',
-                html: link.name,
-                title: link.fileName,
-                click: function () {
-                    chrome.downloads.download({
-                        url: link.url,
-                        filename: link.fileName,
-                        conflictAction: 'uniquify'});
-                }
-            }).appendTo(linksDiv);
-
-            $("<br>").appendTo(linksDiv);
-        })();
-    }
+function startAudioUploading() {
+    chrome.runtime.sendMessage({ name: messages.START_UPLOADING});
+    popupContent.show("uploadingInProgress");
 }
 
-function onGpxCreationFailed(message) {
-    var loader = document.getElementById("loader");
-    document.removeChild(loader);
-
-    document.writeln(message);
+function stopAudioUploading() {
+    chrome.runtime.sendMessage({ name: messages.STOP_UPLOADING});
+    popupContent.show("stoppingUploading");
 }
+
+popupContent.show("startUploading");

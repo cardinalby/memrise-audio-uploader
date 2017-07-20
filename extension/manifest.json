@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
-  "name": "Tripadvisor Gpx Grabber",
-  "description": "Grab POI from tripadvisor map to gpx file",
+  "name": "Memrise Audio Uploader",
+  "description": "Auto uploads audio for words in your course",
   "version": "1.0",
   "icons": {
     "128": "images/mainIcon128.png"
@@ -10,17 +10,24 @@
     "scripts": [
       "messages.js",
       "chromeUtils.js",
-      "tripAdvisorListener.js",
-      "gpxGenerator.js",
-      "gpxManager.js",
       "background.js"
     ],
     "persistent": true
   },
+  "content_scripts": [{
+    "js": [
+      "jquery-2.2.3.js",
+      "memriseEditCourseContent.js",
+      "injectedButton.js",
+      "messages.js"
+    ],
+    "matches": ["https://www.memrise.com/course/*/edit/*"]
+  }],
+  "web_accessible_resources": ["pageInjectedScript.js"],
   "page_action": {
     "default_icon": "images/pageActionIcon38.png",
     "default_popup": "popup.html",
-    "default_title": "Grab points to gpx"
+    "default_title": "Memrise Audio Uploader"
   },
   "permissions": [
     "activeTab",
