@@ -1,4 +1,4 @@
-var BASE_URL = 'http://soundoftext.com/';
+var BASE_URL = 'http://soundoftext.com';
 
 function GetLanguageCode(langName) {
     function loadMainPage() {
@@ -27,7 +27,7 @@ function GetSoundOfText(word, languageCode)
 {
     function sendWord() {
         return $.post({
-            url: BASE_URL + 'sounds',
+            url: BASE_URL + '/sounds',
             data: {
                 text: word,
                 lang: languageCode
@@ -45,7 +45,7 @@ function GetSoundOfText(word, languageCode)
     }
 
     function getSoundInfo(soundId) {
-        return $.get(BASE_URL + 'sounds/' + soundId);
+        return $.get(BASE_URL + '/sounds/' + soundId);
     }
 
     function getSoundFileUrl(data) {
