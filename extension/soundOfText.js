@@ -59,7 +59,25 @@ function GetSoundOfText(word, languageCode)
     }
 
     function loadSoundFile(url) {
-        return $.get(url);
+        var result = $.Deferred();
+
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function(){
+            if (this.readyState === 4) {
+                if (this.status === 200) {
+                    result.resolve(this.response);
+                }
+                else {
+                    result.reject();
+                }
+            }
+        };
+
+        xhr.open('GET', url);
+        xhr.responseType = 'blob';
+        xhr.send();
+
+        return result;
     }
 
     return sendWord()
@@ -85,15 +103,17 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse)
 
         case 'mau-load-sound':
             var gettingSound = GetSoundOfText(request.word, request.languageCode);
-            gettingSound.done(function (file, result, xhr) {
+            gettingSound.done(function (file) {
                 sendResponse({
                     success: true,
-                    sound: file,
-                    contentType: xhr.getResponseHeader('Content-Type')
+                    sound: file
                 });
             });
             gettingSound.fail(function (error) {
-                sendResponse({success: false, error: error});
+                sendResponse({
+                    success: false,
+                    error: error
+                });
             });
             return true;
     }

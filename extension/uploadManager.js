@@ -55,7 +55,13 @@ UploadManager.prototype.uploadForRow = function(row, languageCode)
             languageCode: languageCode
         },
         function (response) {
-            var uploading = memriseCourse.uploadSound(row, response);
+            if (!response || !response.success) {
+                deferred.reject();
+                return;
+            }
+
+            var uploading = memriseCourse.uploadSound(row, response.sound);
+
             uploading.done(function (response) {
                 if (response.success)
                     row.replaceAudioCell(response.rendered);
@@ -63,6 +69,7 @@ UploadManager.prototype.uploadForRow = function(row, languageCode)
                     row.audioCellAddErrorMsg();
                 deferred.resolve();
             });
+
             uploading.fail(function () {
                 row.audioCellAddErrorMsg();
                 deferred.reject();
