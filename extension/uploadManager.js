@@ -47,6 +47,7 @@ UploadManager.prototype.startAutoUpload = function (doneCallback) {
 
 UploadManager.prototype.uploadForRow = function(row, languageCode)
 {
+    var self = this;
     var deferred = $.Deferred();
 
     chrome.runtime.sendMessage({
@@ -60,7 +61,9 @@ UploadManager.prototype.uploadForRow = function(row, languageCode)
                 return;
             }
 
-            var uploading = memriseCourse.uploadSound(row, response.sound);
+            var uploading = memriseCourse.uploadSound(
+                row,
+                self.createBlobFromStr(response.sound, 'audio/mp3'));
 
             uploading.done(function (response) {
                 if (response.success)
@@ -77,6 +80,15 @@ UploadManager.prototype.uploadForRow = function(row, languageCode)
         });
 
     return deferred;
+};
+
+UploadManager.prototype.createBlobFromStr = function (str, mimeType)
+{
+    var bytes = new Uint8Array(str.length);
+    for (var i = 0; i < bytes.length; ++i) {
+        bytes[i] = str.charCodeAt(i);
+    }
+    return new Blob([bytes], {type: mimeType});
 };
 
 var uploadManager = new UploadManager(3);

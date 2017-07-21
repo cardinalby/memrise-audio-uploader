@@ -59,25 +59,7 @@ function GetSoundOfText(word, languageCode)
     }
 
     function loadSoundFile(url) {
-        var result = $.Deferred();
-
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function(){
-            if (this.readyState === 4) {
-                if (this.status === 200) {
-                    result.resolve(this.response);
-                }
-                else {
-                    result.reject();
-                }
-            }
-        };
-
-        xhr.open('GET', url);
-        xhr.responseType = 'blob';
-        xhr.send();
-
-        return result;
+        return $.get(url);
     }
 
     return sendWord()
