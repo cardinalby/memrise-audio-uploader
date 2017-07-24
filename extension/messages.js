@@ -1,5 +1,4 @@
 define([], function () {
-
     /**
      * @typedef {function} ChromeMessageResponseCallback
      */
@@ -9,6 +8,7 @@ define([], function () {
     };
 
     /**
+     * @memberOf MauMessage
      * @param {object} [options]
      * @param {ChromeMessageResponseCallback} [response]
      */
@@ -21,13 +21,25 @@ define([], function () {
         chrome.runtime.sendMessage(message, response);
     };
 
-    MauMessage.prototype.subscribe = function (/** function */ handler) {
+    /**
+     * @memberOf MauMessage
+     * @param {function(object, object, function)} handler
+     */
+    MauMessage.prototype.subscribe = function (handler) {
         //noinspection JSCheckFunctionSignatures
         chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             if (request.name === this.name)
-                handler(request, sender, sendResponse);
+                return handler(request, sender, sendResponse);
         });
     };
 
-
+    /**
+     * @typedef {object} Messages
+     * @property {MauMessage} GET_LANG_CODE
+     * @property {MauMessage} LOAD_SOUND
+     */
+    return {
+        GET_LANG_CODE: new MauMessage('mau-get-lang-code'),
+        LOAD_SOUND: new MauMessage('mau-load-sound')
+    };
 });
