@@ -59,14 +59,45 @@ function GetSoundOfText(word, languageCode)
     }
 
     function loadSoundFile(url) {
-        return $.get(url);
+        var result = $.Deferred();
+
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function(){
+            if (this.readyState === 4) {
+                if (this.status === 200) {
+                    result.resolve(this.response);
+                }
+                else {
+                    result.reject();
+                }
+            }
+        };
+
+        xhr.open('GET', url);
+        xhr.responseType = 'blob';
+        xhr.send();
+
+        return result;
+    }
+
+    function blobToBase64(blob) {
+        var result = $.Deferred();
+        var reader = new FileReader();
+        reader.onload = function() {
+            var dataUrl = reader.result;
+            var base64 = dataUrl.split(',')[1];
+            result.resolve(base64);
+        };
+        reader.readAsDataURL(blob);
+        return result;
     }
 
     return sendWord()
         .then(getSoundId)
         .then(getSoundInfo)
         .then(getSoundFileUrl)
-        .then(loadSoundFile);
+        .then(loadSoundFile)
+        .then(blobToBase64);
 }
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse)

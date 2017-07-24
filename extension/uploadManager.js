@@ -1,11 +1,15 @@
 var UploadManager = function (maxConcurrentUploads) {
     this.maxConcurrentUploads = maxConcurrentUploads;
+    this.stopping = false;
 };
 
-UploadManager.prototype.startAutoUpload = function (doneCallback) {
+UploadManager.prototype.startAutoUpload = function (progressCallback, doneCallback) {
     var self = this;
 
-    memriseCourse.readRows();
+    this.stopping = false;
+    var rows = $.grep(memriseCourse.readRows(), function (row) {
+        return !row.hasSound;
+    });
 
     chrome.runtime.sendMessage({
         name: 'mau-get-lang-code',
@@ -16,26 +20,35 @@ UploadManager.prototype.startAutoUpload = function (doneCallback) {
         {
             var langCode = response.code;
             var uploadsCount = 0;
+            var doneCount = 0;
             var rowIndex = 0;
 
             function startNewUploads() {
                 while (uploadsCount < self.maxConcurrentUploads &&
-                       rowIndex < memriseCourse.rows.length)
+                       rowIndex < rows.length &&
+                       !self.stopping)
                 {
-                    if (!memriseCourse.rows[rowIndex].hasSound) {
-                        ++uploadsCount;
-                        var uploading = self.uploadForRow(memriseCourse.rows[rowIndex], langCode);
-                        uploading.always(function () {
-                            --uploadsCount;
-                            startNewUploads();
-                        });
-                    }
+                    ++uploadsCount;
+                    var uploading = self.uploadForRow(rows[rowIndex], langCode);
+                    uploading.always(function () {
+                        ++doneCount;
+                        --uploadsCount;
+
+                        if (progressCallback)
+                            progressCallback(doneCount, rows.length);
+
+                        startNewUploads();
+                    });
 
                     ++rowIndex;
                 }
 
-                if (rowIndex === memriseCourse.rows.length && doneCallback)
+                if ((rowIndex === rows.length ||
+                    self.stopping && uploadsCount === 0) &&
+                    doneCallback)
+                {
                     doneCallback();
+                }
             }
 
             startNewUploads();
@@ -43,6 +56,21 @@ UploadManager.prototype.startAutoUpload = function (doneCallback) {
         else
             console.log(response.error);
     });
+};
+
+UploadManager.prototype.stopUploading = function() {
+    this.stopping = true;
+};
+
+UploadManager.prototype.base64ToBlob = function(base64, contentType) {
+    var binary = atob(base64);
+    var len = binary.length;
+    var buffer = new ArrayBuffer(len);
+    var view = new Uint8Array(buffer);
+    for (var i = 0; i < len; i++) {
+        view[i] = binary.charCodeAt(i);
+    }
+    return new Blob([view], {type: contentType});
 };
 
 UploadManager.prototype.uploadForRow = function(row, languageCode)
@@ -61,9 +89,16 @@ UploadManager.prototype.uploadForRow = function(row, languageCode)
                 return;
             }
 
-            var uploading = memriseCourse.uploadSound(
-                row,
-                self.createBlobFromStr(response.sound, 'audio/mp3'));
+            if (row.hasSound)
+                return;
+
+            var sound = self.base64ToBlob(response.sound, 'audio/mp3');
+
+            var uploading = memriseCourse.uploadSound(row, sound);
+
+            var removeUploadingMsg = row.audioCellAddUploadingMsg();
+
+            uploading.always(removeUploadingMsg);
 
             uploading.done(function (response) {
                 if (response.success)
@@ -80,15 +115,6 @@ UploadManager.prototype.uploadForRow = function(row, languageCode)
         });
 
     return deferred;
-};
-
-UploadManager.prototype.createBlobFromStr = function (str, mimeType)
-{
-    var bytes = new Uint8Array(str.length);
-    for (var i = 0; i < bytes.length; ++i) {
-        bytes[i] = str.charCodeAt(i);
-    }
-    return new Blob([bytes], {type: mimeType});
 };
 
 var uploadManager = new UploadManager(3);
