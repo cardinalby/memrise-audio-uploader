@@ -65,15 +65,15 @@ UploadManager.prototype.stopUploading = function() {
     this.stopping = true;
 };
 
-UploadManager.prototype.base64ToBlob = function(base64, contentType) {
-    var binary = atob(base64);
+UploadManager.prototype.base64ToBlob = function(obj) {
+    var binary = atob(obj.base64);
     var len = binary.length;
     var buffer = new ArrayBuffer(len);
     var view = new Uint8Array(buffer);
     for (var i = 0; i < len; i++) {
         view[i] = binary.charCodeAt(i);
     }
-    return new Blob([view], {type: contentType});
+    return new Blob([view], {type: obj.contentType});
 };
 
 UploadManager.prototype.uploadForRow = function(row, languageCode)
@@ -94,7 +94,7 @@ UploadManager.prototype.uploadForRow = function(row, languageCode)
             if (row.hasSound)
                 return;
 
-            var sound = self.base64ToBlob(response.sound, 'audio/mp3');
+            var sound = self.base64ToBlob(response.sound);
 
             var uploading = memriseCourse.uploadSound(row, sound);
 

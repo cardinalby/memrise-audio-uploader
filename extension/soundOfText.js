@@ -83,13 +83,13 @@ function GetSoundOfText(word, languageCode)
         return result;
     }
 
-    function blobToBase64(blob) {
+    function seriazlizeBlob(blob) {
         var result = $.Deferred();
         var reader = new FileReader();
         reader.onload = function() {
             var dataUrl = reader.result;
             var base64 = dataUrl.split(',')[1];
-            result.resolve(base64);
+            result.resolve({base64: base64, contentType: blob.type});
         };
         reader.readAsDataURL(blob);
         return result;
@@ -100,7 +100,7 @@ function GetSoundOfText(word, languageCode)
         .then(getSoundInfo)
         .then(getSoundFileUrl)
         .then(loadSoundFile)
-        .then(blobToBase64);
+        .then(seriazlizeBlob);
 }
 
 MESSAGES.GET_LANG_CODE.subscribe(function(request, sender, sendResponse)
@@ -117,10 +117,10 @@ MESSAGES.GET_LANG_CODE.subscribe(function(request, sender, sendResponse)
 
 MESSAGES.LOAD_SOUND.subscribe(function(request, sender, sendResponse) {
     var gettingSound = GetSoundOfText(request.word, request.languageCode);
-    gettingSound.done(function (file) {
+    gettingSound.done(function (base64file) {
         sendResponse({
             success: true,
-            sound: file
+            sound: base64file
         });
     });
     gettingSound.fail(function (error) {
