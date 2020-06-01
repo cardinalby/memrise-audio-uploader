@@ -24,3 +24,12 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm run buildAll
+      env:
+        G_REFRESH_TOKEN: ${{secrets.G_REFRESH_TOKEN}}
+        G_EXTENSION_ID: ${{secrets.G_EXTENSION_ID}}
+        G_CLIENT_SECRET: ${{secrets.G_CLIENT_SECRET}}
+        G_CLIENT_ID: ${{secrets.G_CLIENT_ID}}
+        FF_EXTENSION_ID: ${{secrets.FF_EXTENSION_ID}}
+        FF_OFFLINE_EXT_ID: ${{secrets.FF_OFFLINE_EXT_ID}}
+        FF_JWT_ISSUER: ${{secrets.FF_JWT_ISSUER}}
+        FF_JWT_SECRET: ${{secrets.FF_JWT_SECRET}}
