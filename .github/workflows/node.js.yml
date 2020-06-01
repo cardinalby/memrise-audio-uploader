@@ -5,8 +5,8 @@ name: Node.js CI
 
 on:
   push:
-    tags:
-      - '*'
+    branches:
+      - master
 
 jobs:
   deploy:
@@ -48,7 +48,7 @@ jobs:
         draft: false
         prerelease: false
     - name: Upload Release Asset (zip)
-      id: upload-release-asset
+      id: upload-release-asset-zip
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -58,7 +58,7 @@ jobs:
         asset_name: extension.zip
         asset_content_type: application/zip
     - name: Upload Release Asset (crx)
-      id: upload-release-asset
+      id: upload-release-asset-crx
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -68,7 +68,7 @@ jobs:
         asset_name: extension.crx
         asset_content_type: application/x-chrome-extension
     - name: Upload Release Asset (xpi)
-      id: upload-release-asset
+      id: upload-release-asset-xpi
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
