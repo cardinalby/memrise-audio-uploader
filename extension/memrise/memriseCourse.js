@@ -32,11 +32,7 @@ class MemriseCourse {
         data.append('csrfmiddlewaretoken', this.middlewareToken);
         data.append('f', sound, 'file.mp3');
 
-        const xhr = typeof XPCNativeWrapper === 'function'
-            // for Firefox, to provide page referer
-            ? XPCNativeWrapper(new window.wrappedJSObject.XMLHttpRequest())
-            // for chrome
-            : new XMLHttpRequest();
+        const xhr = createXMLHttpRequest();
 
         return new Promise((resolve, reject) => {
             xhr.onreadystatechange = function () {
