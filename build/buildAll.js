@@ -50,8 +50,8 @@ async function build() {
 
     builder.requireChromeWebstoreDeploy();
     builder.requireChromeWebstorePublishedCrx();
-    builder.requireFirefoxAddonsDeploy();
-    builder.requireFirefoxAddonsSignedXpi();
+    // builder.requireFirefoxAddonsDeploy();
+    // builder.requireFirefoxAddonsSignedXpi();
     builder.requireManifest();
     builder.requireZip();
 
