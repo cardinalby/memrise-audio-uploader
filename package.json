@@ -17,6 +17,6 @@
     "webext-buildtools-integrated-builder": "^1.0.7"
   },
   "scripts": {
-    "buildAll": "node %NODE_DEBUG_OPTION% build/buildAll.js"
+    "buildAll": "node build/buildAll.js"
   }
 }
