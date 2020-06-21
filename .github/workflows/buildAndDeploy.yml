@@ -20,7 +20,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build Crx
-      id: build-crx
+      id: build_crx
       uses: cardinalby/webext-buildtools-chrome-crx-action@master
       with:
         extensionDir: 'extension'
@@ -44,6 +44,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./build/extensionOffline.crx
+        asset_path: ${{ steps.build_crx.outputs.crxFilePath }}
         asset_name: extension.offline.crx
         asset_content_type: application/x-chrome-extension
