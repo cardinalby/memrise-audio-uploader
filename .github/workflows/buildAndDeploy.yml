@@ -21,7 +21,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build Crx
       id: build-crx
-      uses: cardinalby/webext-buildtools-chrome-crx-action@v1
+      uses: cardinalby/webext-buildtools-chrome-crx-action@master
       with:
         extensionDir: 'extension'
         crxFilePath: 'build/extension.offline.crx'
