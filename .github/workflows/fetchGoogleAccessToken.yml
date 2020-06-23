@@ -1,7 +1,7 @@
 name: "fetch-access-token"
 on:
   schedule:
-    - cron:  '*/5 * * * *' # run every month
+    - cron:  '* * * */1 *' # run every month
 
 jobs:
   fetchToken:
