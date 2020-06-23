@@ -1,0 +1,17 @@
+name: "fetch-access-token"
+on:
+  schedule:
+    - cron:  '*/5 * * * *' # run every month
+
+jobs:
+  fetchToken:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+    steps:
+      - uses: cardinalby/google-api-fetch-token-action@master
+        with:
+          clientId: ${{ secrets.G_CLIENT_SECRET }}
+          clientSecret: ${{ secrets.G_EXTENSION_ID }}
+          refreshToken: ${{ secrets.G_REFRESH_TOKEN }}
