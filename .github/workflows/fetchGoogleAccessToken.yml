@@ -12,6 +12,6 @@ jobs:
     steps:
       - uses: cardinalby/google-api-fetch-token-action@master
         with:
-          clientId: ${{ secrets.G_CLIENT_SECRET }}
-          clientSecret: ${{ secrets.G_EXTENSION_ID }}
+          clientId: ${{ secrets.G_CLIENT_ID }}
+          clientSecret: ${{ secrets.G_CLIENT_SECRET }}
           refreshToken: ${{ secrets.G_REFRESH_TOKEN }}
