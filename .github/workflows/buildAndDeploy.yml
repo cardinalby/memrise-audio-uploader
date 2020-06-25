@@ -31,7 +31,7 @@ jobs:
 
     - name: Deploy to Google Web Store
       id: deploy_google_web_store
-      uses: cardinalby/webext-buildtools-chrome-webstore-action@v1
+      uses: cardinalby/webext-buildtools-chrome-webstore-action@master
       with:
         extensionDir: 'extension'
         extensionId: ${{ secrets.G_EXTENSION_ID }}
