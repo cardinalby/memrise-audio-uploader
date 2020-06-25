@@ -8,8 +8,8 @@ on:
 jobs:
   build:
     env:
-      - OFFLINE_CRX_PATH: 'build/extension.offline.crx'
-      - WEBSTORE_PUBLISHED_CRX_PATH: 'build/extension.webstore.crx'
+      OFFLINE_CRX_PATH: 'build/extension.offline.crx'
+      WEBSTORE_PUBLISHED_CRX_PATH: 'build/extension.webstore.crx'
     runs-on: ubuntu-latest
 
     strategy:
