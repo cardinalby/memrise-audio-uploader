@@ -7,7 +7,9 @@ on:
 
 jobs:
   build:
-
+    env:
+      - OFFLINE_CRX_PATH: 'build/extension.offline.crx'
+      - WEBSTORE_PUBLISHED_CRX_PATH: 'build/extension.webstore.crx'
     runs-on: ubuntu-latest
 
     strategy:
@@ -18,13 +20,26 @@ jobs:
     - uses: actions/checkout@v2
     - uses: olegtarasov/get-tag@v2
       id: tagName
+
     - name: Build Crx
       id: build_crx
       uses: cardinalby/webext-buildtools-chrome-crx-action@v1
       with:
         extensionDir: 'extension'
-        crxFilePath: 'build/extension.offline.crx'
+        crxFilePath: ${{ env.OFFLINE_CRX_PATH }}
         privateKey: ${{ secrets.CHROME_CRX_PRIVATE_KEY }}
+
+    - name: Deploy to Google Web Store
+      id: deploy_google_web_store
+      uses: cardinalby/webext-buildtools-chrome-webstore-action@v1
+      with:
+        extensionDir: 'extension'
+        extensionId: ${{ secrets.G_EXTENSION_ID }}
+        apiClientId: ${{ secrets.G_CLIENT_ID }}
+        apiClientSecret: ${{ secrets.G_CLIENT_SECRET }}
+        apiRefreshToken: ${{ secrets.G_REFRESH_TOKEN }}
+        downloadCrxFilePath: ${{ env.WEBSTORE_PUBLISHED_CRX_PATH }}
+
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -36,8 +51,8 @@ jobs:
         body: Extension release
         draft: false
         prerelease: false
-    - name: Upload Release Asset (crx)
-      id: upload-release-asset-crx
+
+    - name: Upload offline crx release asset
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -45,4 +60,14 @@ jobs:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ${{ steps.build_crx.outputs.crxFilePath }}
         asset_name: extension.offline.crx
+        asset_content_type: application/x-chrome-extension
+
+    - name: Upload webstore published crx release asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ${{ steps.deploy_google_web_store.outputs.crxFilePath }}
+        asset_name: extension.webstore.crx
         asset_content_type: application/x-chrome-extension
