@@ -1,4 +1,4 @@
-name: "fetch-access-token"
+name: "fetch-google-access-token"
 on:
   schedule:
     - cron:  '* * * */1 *' # run every month
@@ -10,7 +10,7 @@ jobs:
       matrix:
         node-version: [12.x]
     steps:
-      - uses: cardinalby/google-api-fetch-token-action@master
+      - uses: cardinalby/google-api-fetch-token-action@v1
         with:
           clientId: ${{ secrets.G_CLIENT_ID }}
           clientSecret: ${{ secrets.G_CLIENT_SECRET }}
