@@ -3,7 +3,7 @@ name: buildAndDeploy
 on:
   push:
     tags:
-      - '*'
+      - '*.*.*'
 
 jobs:
   build:
