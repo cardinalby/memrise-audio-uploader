@@ -1,0 +1,25 @@
+name: "delayed-chrome-web-store-deploy"
+on:
+  schedule:
+    - cron:  '* * * * *'
+
+jobs:
+  fetchToken:
+    env:
+      DELAYED_CHROME_WEBSTORE_DEPLOY_TAG: 'deploy-to-chrome-webstore'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+    steps:
+      - id: checkoutTag
+        uses: actions/checkout@v2
+        continue-on-error: true
+        ref: refs/tags/${{ env.DELAYED_CHROME_WEBSTORE_DEPLOY_TAG }}
+      - id: deployToWebstore
+        run: echo 'do work';
+        if: steps.checkoutTag.outcome == 'success'
+      - uses: dev-drprasad/delete-tag-and-release@v0.1.2
+        if: steps.deployToWebstore.outcome == 'success'
+        delete_release: false
+        tag_name: ${{ env.DELAYED_CHROME_WEBSTORE_DEPLOY_TAG }}

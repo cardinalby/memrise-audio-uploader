@@ -29,16 +29,16 @@ jobs:
         crxFilePath: ${{ env.OFFLINE_CRX_PATH }}
         privateKey: ${{ secrets.CHROME_CRX_PRIVATE_KEY }}
 
-    - name: Deploy to Google Web Store
-      id: deploy_google_web_store
-      uses: cardinalby/webext-buildtools-chrome-webstore-action@master
-      with:
-        extensionDir: 'extension'
-        extensionId: ${{ secrets.G_EXTENSION_ID }}
-        apiClientId: ${{ secrets.G_CLIENT_ID }}
-        apiClientSecret: ${{ secrets.G_CLIENT_SECRET }}
-        apiRefreshToken: ${{ secrets.G_REFRESH_TOKEN }}
-        downloadCrxFilePath: ${{ env.WEBSTORE_PUBLISHED_CRX_PATH }}
+#    - name: Deploy to Google Web Store
+#      id: deploy_google_web_store
+#      uses: cardinalby/webext-buildtools-chrome-webstore-action@master
+#      with:
+#        extensionDir: 'extension'
+#        extensionId: ${{ secrets.G_EXTENSION_ID }}
+#        apiClientId: ${{ secrets.G_CLIENT_ID }}
+#        apiClientSecret: ${{ secrets.G_CLIENT_SECRET }}
+#        apiRefreshToken: ${{ secrets.G_REFRESH_TOKEN }}
+#        downloadCrxFilePath: ${{ env.WEBSTORE_PUBLISHED_CRX_PATH }}
 
     - name: Create Release
       id: create_release
@@ -62,12 +62,12 @@ jobs:
         asset_name: extension.offline.crx
         asset_content_type: application/x-chrome-extension
 
-    - name: Upload webstore published crx release asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{ steps.deploy_google_web_store.outputs.crxFilePath }}
-        asset_name: extension.webstore.crx
-        asset_content_type: application/x-chrome-extension
+#    - name: Upload webstore published crx release asset
+#      uses: actions/upload-release-asset@v1
+#      env:
+#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      with:
+#        upload_url: ${{ steps.create_release.outputs.upload_url }}
+#        asset_path: ${{ steps.deploy_google_web_store.outputs.crxFilePath }}
+#        asset_name: extension.webstore.crx
+#        asset_content_type: application/x-chrome-extension
