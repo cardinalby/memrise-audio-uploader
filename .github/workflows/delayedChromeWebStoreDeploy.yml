@@ -25,3 +25,5 @@ jobs:
         with:
           delete_release: false
           tag_name: ${{ env.DELAYED_CHROME_WEBSTORE_DEPLOY_TAG }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
