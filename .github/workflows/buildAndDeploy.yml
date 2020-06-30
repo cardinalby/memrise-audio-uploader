@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     env:
+      EXTENSION_DIR_PATH: 'extension'
+      PACKED_ZIP_PATH: 'build/extension.zip'
       OFFLINE_CRX_PATH: 'build/extension.offline.crx'
       WEBSTORE_PUBLISHED_CRX_PATH: 'build/extension.webstore.crx'
     runs-on: ubuntu-latest
@@ -21,11 +23,18 @@ jobs:
     - uses: olegtarasov/get-tag@v2
       id: tagName
 
-    - name: Build Crx
+    - name: Pack directory
+      id: packExtensionDir
+      uses: cardinalby/webext-buildtools-pack-extension-dir-action@v1
+      with:
+        extensionDir: ${{ env.EXTENSION_DIR_PATH }}
+        zipFilePath: ${{ env.PACKED_ZIP_PATH }}
+
+    - name: Build crx
       id: build_crx
       uses: cardinalby/webext-buildtools-chrome-crx-action@v1
       with:
-        extensionDir: 'extension'
+        zipFilePath: ${{ env.PACKED_ZIP_PATH }}
         crxFilePath: ${{ env.OFFLINE_CRX_PATH }}
         privateKey: ${{ secrets.CHROME_CRX_PRIVATE_KEY }}
 

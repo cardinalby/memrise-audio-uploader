@@ -23,7 +23,6 @@
 #      - uses: dev-drprasad/delete-tag-and-release@v0.1.2
 #        if: steps.deployToWebstore.outcome == 'success'
 #        with:
-#          delete_release: false
 #          tag_name: ${{ env.DELAYED_CHROME_WEBSTORE_DEPLOY_TAG }}
 #        env:
 #          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
