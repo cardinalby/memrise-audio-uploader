@@ -25,7 +25,7 @@ jobs:
 
     - name: Pack directory
       id: packExtensionDir
-      uses: cardinalby/webext-buildtools-pack-extension-dir-action@v
+      uses: cardinalby/webext-buildtools-pack-extension-dir-action@v1
       with:
         extensionDir: ${{ env.EXTENSION_DIR_PATH }}
         zipFilePath: ${{ env.PACKED_ZIP_PATH }}
