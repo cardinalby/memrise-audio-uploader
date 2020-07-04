@@ -25,14 +25,14 @@ jobs:
 
     - name: Pack directory
       id: packExtensionDir
-      uses: cardinalby/webext-buildtools-pack-extension-dir-action@v1
+      uses: cardinalby/webext-buildtools-pack-extension-dir-action@v
       with:
         extensionDir: ${{ env.EXTENSION_DIR_PATH }}
         zipFilePath: ${{ env.PACKED_ZIP_PATH }}
 
     - name: Build crx
       id: build_crx
-      uses: cardinalby/webext-buildtools-chrome-crx-action@v1
+      uses: cardinalby/webext-buildtools-chrome-crx-action@v2
       with:
         zipFilePath: ${{ env.PACKED_ZIP_PATH }}
         crxFilePath: ${{ env.OFFLINE_CRX_PATH }}
