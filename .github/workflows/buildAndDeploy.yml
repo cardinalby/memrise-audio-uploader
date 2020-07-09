@@ -58,7 +58,7 @@ jobs:
 
     - name: Add tag to deploy to Chrome Web Store later
       if: steps.gWebStoreUpload.outputs.inReviewError == 'true'
-      uses: hole19/git-tag-action@master
+      uses: cardinalby/git-tag-action@master
       env:
         TAG: ${{ env.DELAYED_CHROME_WEBSTORE_DEPLOY_TAG }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
