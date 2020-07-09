@@ -12,6 +12,7 @@ jobs:
       PACKED_ZIP_PATH: 'build/extension.zip'
       OFFLINE_CRX_PATH: 'build/extension.offline.crx'
       WEBSTORE_PUBLISHED_CRX_PATH: 'build/extension.webstore.crx'
+      DELAYED_CHROME_WEBSTORE_DEPLOY_TAG: 'deploy-to-chrome-webstore'
     runs-on: ubuntu-latest
 
     strategy:
@@ -31,23 +32,55 @@ jobs:
         zipFilePath: ${{ env.PACKED_ZIP_PATH }}
 
     - name: Build crx
-      id: build_crx
+      id: buildCrx
       uses: cardinalby/webext-buildtools-chrome-crx-action@v2
       with:
         zipFilePath: ${{ env.PACKED_ZIP_PATH }}
         crxFilePath: ${{ env.OFFLINE_CRX_PATH }}
         privateKey: ${{ secrets.CHROME_CRX_PRIVATE_KEY }}
 
-#    - name: Deploy to Google Web Store
-#      id: deploy_google_web_store
-#      uses: cardinalby/webext-buildtools-chrome-webstore-action@master
-#      with:
-#        extensionDir: 'extension'
-#        extensionId: ${{ secrets.G_EXTENSION_ID }}
-#        apiClientId: ${{ secrets.G_CLIENT_ID }}
-#        apiClientSecret: ${{ secrets.G_CLIENT_SECRET }}
-#        apiRefreshToken: ${{ secrets.G_REFRESH_TOKEN }}
-#        downloadCrxFilePath: ${{ env.WEBSTORE_PUBLISHED_CRX_PATH }}
+    - name: Fetch Google API access token
+      id: gAccessToken
+      uses: cardinalby/google-api-fetch-token-action@v1
+      with:
+        clientId: ${{ secrets.G_CLIENT_ID }}
+        clientSecret: ${{ secrets.G_CLIENT_SECRET }}
+        refreshToken: ${{ secrets.G_REFRESH_TOKEN }}
+
+    - name: Upload to Google Web Store
+      id: gWebStoreUpload
+      uses: cardinalby/webext-buildtools-chrome-webstore-upload-action@master
+      continue-on-error: true
+      with:
+        zipFilePath: ${{ env.PACKED_ZIP_PATH }}
+        extensionId: ${{ secrets.G_EXTENSION_ID }}
+        apiAccessToken: ${{ steps.gAccessToken.outputs.accessToken }}
+
+    - name: Add tag to deploy to Chrome Web Store later
+      if: steps.gWebStoreUpload.outputs.inReviewError
+      uses: hole19/git-tag-action@master
+      env:
+        TAG: ${{ env.DELAYED_CHROME_WEBSTORE_DEPLOY_TAG }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Publish at Google Web Store
+      id: gWebStorePublish
+      if: steps.gWebStoreUpload.outputs.newVersion
+      uses: cardinalby/webext-buildtools-chrome-webstore-publish-action@master
+      with:
+        extensionId: ${{ secrets.G_EXTENSION_ID }}
+        apiAccessToken: ${{ steps.gAccessToken.outputs.accessToken }}
+
+    - name: Check can continue after uploading
+      run: ([ -z ${{ steps.gWebStoreUpload.outputs.newVersion }} ] && [ -z ${{ steps.gWebStoreUpload.outputs.inReviewError }} ]) && exit 1 || exit 0
+
+    - name: Download published crx file
+      id: gWebStoreDownloadCrx
+      if: steps.gWebStorePublish.outcome == 'success'
+      uses: cardinalby/webext-buildtools-chrome-webstore-download-crx-action@master
+      with:
+        extensionId: ${{ secrets.G_EXTENSION_ID }}
+        crxFilePath: ${{ env.WEBSTORE_PUBLISHED_CRX_PATH }}
 
     - name: Create Release
       id: create_release
@@ -67,16 +100,17 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{ steps.build_crx.outputs.crxFilePath }}
+        asset_path: ${{ steps.buildCrx.outputs.crxFilePath }}
         asset_name: extension.offline.crx
         asset_content_type: application/x-chrome-extension
 
-#    - name: Upload webstore published crx release asset
-#      uses: actions/upload-release-asset@v1
-#      env:
-#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#      with:
-#        upload_url: ${{ steps.create_release.outputs.upload_url }}
-#        asset_path: ${{ steps.deploy_google_web_store.outputs.crxFilePath }}
-#        asset_name: extension.webstore.crx
-#        asset_content_type: application/x-chrome-extension
+    - name: Upload webstore published crx release asset
+      if: steps.gWebStoreDownloadCrx.outcome == 'success'
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ${{ steps.gWebStoreDownloadCrx.outputs.crxFilePath }}
+        asset_name: extension.webstore.crx
+        asset_content_type: application/x-chrome-extension
