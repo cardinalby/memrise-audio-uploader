@@ -57,7 +57,7 @@ jobs:
         apiAccessToken: ${{ steps.gAccessToken.outputs.accessToken }}
 
     - name: Add tag to deploy to Chrome Web Store later
-      if: steps.gWebStoreUpload.outputs.inReviewError
+      if: steps.gWebStoreUpload.outputs.inReviewError == 'true'
       uses: hole19/git-tag-action@master
       env:
         TAG: ${{ env.DELAYED_CHROME_WEBSTORE_DEPLOY_TAG }}
@@ -72,7 +72,7 @@ jobs:
         apiAccessToken: ${{ steps.gAccessToken.outputs.accessToken }}
 
     - name: Check can continue after uploading
-      run: ([ -z ${{ steps.gWebStoreUpload.outputs.newVersion }} ] && [ -z ${{ steps.gWebStoreUpload.outputs.inReviewError }} ]) && exit 1 || exit 0
+      run: ([ -z '${{ steps.gWebStoreUpload.outputs.newVersion }}' ] && [ '${{ steps.gWebStoreUpload.outputs.inReviewError }}' = 'true' ]) && exit 1 || exit 0
 
     - name: Download published crx file
       id: gWebStoreDownloadCrx
