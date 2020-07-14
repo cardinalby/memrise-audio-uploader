@@ -12,6 +12,7 @@ jobs:
       PACKED_ZIP_PATH: 'build/extension.zip'
       OFFLINE_CRX_PATH: 'build/extension.offline.crx'
       WEBSTORE_PUBLISHED_CRX_PATH: 'build/extension.webstore.crx'
+      WEBSTORE_PUBLISHED_CRX_ASSET_NAME: 'extension.webstore.crx'
       DELAYED_CHROME_WEBSTORE_DEPLOY_TAG: 'deploy-to-chrome-webstore'
     runs-on: ubuntu-latest
 
@@ -56,13 +57,6 @@ jobs:
         extensionId: ${{ secrets.G_EXTENSION_ID }}
         apiAccessToken: ${{ steps.gAccessToken.outputs.accessToken }}
 
-    - name: Add tag to deploy to Chrome Web Store later
-      if: steps.gWebStoreUpload.outputs.inReviewError == 'true'
-      uses: cardinalby/git-tag-action@master
-      env:
-        TAG: ${{ env.DELAYED_CHROME_WEBSTORE_DEPLOY_TAG }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
     - name: Publish at Google Web Store
       id: gWebStorePublish
       if: steps.gWebStoreUpload.outputs.newVersion
@@ -71,8 +65,17 @@ jobs:
         extensionId: ${{ secrets.G_EXTENSION_ID }}
         apiAccessToken: ${{ steps.gAccessToken.outputs.accessToken }}
 
-    - name: Check can continue after uploading
-      run: ([ -z '${{ steps.gWebStoreUpload.outputs.newVersion }}' ] && [ '${{ steps.gWebStoreUpload.outputs.inReviewError }}' != 'true' ]) && exit 1 || exit 0
+    - name: Schedule delayed Google Web Store uploading/publishing
+      if: steps.gWebStoreUpload.outputs.inReviewError == 'true'
+      uses: cardinalby/schedule-job-action@v1
+      with:
+        ghToken: ${{ secrets.WORKFLOWS_TOKEN }}
+        templateYmlFile: '.github-workflows-templates/delayedChromeWebStoreDeploy.yml'
+        addTag: ${{ env.DELAYED_CHROME_WEBSTORE_DEPLOY_TAG }}
+
+    - name: Abort on Google Web Store error
+      if: "!steps.gWebStoreUpload.outputs.newVersion && steps.gWebStoreUpload.outputs.inReviewError != 'true'"
+      run: exit 1
 
     - name: Download published crx file
       id: gWebStoreDownloadCrx
@@ -112,5 +115,5 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ${{ steps.gWebStoreDownloadCrx.outputs.crxFilePath }}
-        asset_name: extension.webstore.crx
+        asset_name: ${{ env.WEBSTORE_PUBLISHED_CRX_ASSET_NAME }}
         asset_content_type: application/x-chrome-extension
