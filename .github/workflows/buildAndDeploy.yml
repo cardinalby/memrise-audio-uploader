@@ -92,22 +92,22 @@ jobs:
         extensionId: ${{ secrets.G_EXTENSION_ID }}
         crxFilePath: ${{ env.WEBSTORE_PUBLISHED_CRX_PATH }}
 
-    - name: Deploy to Firefox Addons
-      uses: cardinalby/webext-buildtools-firefox-addons-action@master
-      with:
-        zipFilePath: ${{ env.PACKED_ZIP_PATH }}
-        extensionId: ${{ secrets.FF_EXTENSION_ID }}
-        jwtIssuer: ${{ secrets.FF_JWT_ISSUER }}
-        jwtSecret: ${{ secrets.FF_JWT_SECRET }}
-
-    - name: Sign Firefox xpi for offline distribution
-      id: ffSignXpi
-      uses: cardinalby/webext-buildtools-firefox-sign-xpi-action@master
-      with:
-        zipFilePath: ${{ env.PACKED_ZIP_PATH }}
-        xpiFilePath: ${{ env.OFFLINE_XPI_PATH }}
-        jwtIssuer: ${{ secrets.FF_JWT_ISSUER }}
-        jwtSecret: ${{ secrets.FF_JWT_SECRET }}
+#    - name: Deploy to Firefox Addons
+#      uses: cardinalby/webext-buildtools-firefox-addons-action@master
+#      with:
+#        zipFilePath: ${{ env.PACKED_ZIP_PATH }}
+#        extensionId: ${{ secrets.FF_EXTENSION_ID }}
+#        jwtIssuer: ${{ secrets.FF_JWT_ISSUER }}
+#        jwtSecret: ${{ secrets.FF_JWT_SECRET }}
+#
+#    - name: Sign Firefox xpi for offline distribution
+#      id: ffSignXpi
+#      uses: cardinalby/webext-buildtools-firefox-sign-xpi-action@master
+#      with:
+#        zipFilePath: ${{ env.PACKED_ZIP_PATH }}
+#        xpiFilePath: ${{ env.OFFLINE_XPI_PATH }}
+#        jwtIssuer: ${{ secrets.FF_JWT_ISSUER }}
+#        jwtSecret: ${{ secrets.FF_JWT_SECRET }}
 
     - name: Create Release
       id: createRelease
@@ -142,12 +142,12 @@ jobs:
         asset_name: ${{ env.WEBSTORE_PUBLISHED_CRX_ASSET_NAME }}
         asset_content_type: application/x-chrome-extension
 
-    - name: Upload offline crx release asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.createRelease.outputs.upload_url }}
-        asset_path: ${{ steps.ffSignXpi.outputs.xpiFilePath }}
-        asset_name: ${{ env.OFFLINE_XPI_ASSET_NAME }}
-        asset_content_type: application/x-xpinstall
+#    - name: Upload offline xpi release asset
+#      uses: actions/upload-release-asset@v1
+#      env:
+#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      with:
+#        upload_url: ${{ steps.createRelease.outputs.upload_url }}
+#        asset_path: ${{ steps.ffSignXpi.outputs.xpiFilePath }}
+#        asset_name: ${{ env.OFFLINE_XPI_ASSET_NAME }}
+#        asset_content_type: application/x-xpinstall
