@@ -96,7 +96,7 @@ jobs:
       uses: cardinalby/webext-buildtools-firefox-addons-action@master
       with:
         zipFilePath: ${{ env.PACKED_ZIP_PATH }}
-        extensionId: ${{ env.FF_EXTENSION_ID }}
+        extensionId: ${{ secrets.FF_EXTENSION_ID }}
         jwtIssuer: ${{ secrets.FF_JWT_ISSUER }}
         jwtSecret: ${{ secrets.FF_JWT_SECRET }}
 
