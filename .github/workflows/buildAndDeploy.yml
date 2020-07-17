@@ -10,9 +10,16 @@ jobs:
     env:
       EXTENSION_DIR_PATH: 'extension'
       PACKED_ZIP_PATH: 'build/extension.zip'
+
       OFFLINE_CRX_PATH: 'build/extension.offline.crx'
+      OFFLINE_CRX_ASSET_NAME: 'extension.offline.crx'
+
+      OFFLINE_XPI_PATH: 'build/extension.offline.xpi'
+      OFFLINE_XPI_ASSET_NAME: 'extension.offline.xpi'
+
       WEBSTORE_PUBLISHED_CRX_PATH: 'build/extension.webstore.crx'
       WEBSTORE_PUBLISHED_CRX_ASSET_NAME: 'extension.webstore.crx'
+
       DELAYED_CHROME_WEBSTORE_DEPLOY_TAG: 'deploy-to-chrome-webstore'
     runs-on: ubuntu-latest
 
@@ -85,8 +92,25 @@ jobs:
         extensionId: ${{ secrets.G_EXTENSION_ID }}
         crxFilePath: ${{ env.WEBSTORE_PUBLISHED_CRX_PATH }}
 
+    - name: Deploy to Firefox Addons
+      uses: cardinalby/webext-buildtools-firefox-addons-action@master
+      with:
+        zipFilePath: ${{ env.PACKED_ZIP_PATH }}
+        extensionId: ${{ env.FF_EXTENSION_ID }}
+        jwtIssuer: ${{ secrets.FF_JWT_ISSUER }}
+        jwtSecret: ${{ secrets.FF_JWT_SECRET }}
+
+    - name: Sign Firefox xpi for offline distribution
+      id: ffSignXpi
+      uses: cardinalby/webext-buildtools-firefox-sign-xpi-action@master
+      with:
+        zipFilePath: ${{ env.PACKED_ZIP_PATH }}
+        xpiFilePath: ${{ env.OFFLINE_XPI_PATH }}
+        jwtIssuer: ${{ secrets.FF_JWT_ISSUER }}
+        jwtSecret: ${{ secrets.FF_JWT_SECRET }}
+
     - name: Create Release
-      id: create_release
+      id: createRelease
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -102,9 +126,9 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        upload_url: ${{ steps.createRelease.outputs.upload_url }}
         asset_path: ${{ steps.buildCrx.outputs.crxFilePath }}
-        asset_name: extension.offline.crx
+        asset_name: ${{ env.OFFLINE_CRX_ASSET_NAME }}
         asset_content_type: application/x-chrome-extension
 
     - name: Upload webstore published crx release asset
@@ -113,7 +137,17 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        upload_url: ${{ steps.createRelease.outputs.upload_url }}
         asset_path: ${{ steps.gWebStoreDownloadCrx.outputs.crxFilePath }}
         asset_name: ${{ env.WEBSTORE_PUBLISHED_CRX_ASSET_NAME }}
         asset_content_type: application/x-chrome-extension
+
+    - name: Upload offline crx release asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.createRelease.outputs.upload_url }}
+        asset_path: ${{ steps.ffSignXpi.outputs.xpiFilePath }}
+        asset_name: ${{ env.OFFLINE_XPI_ASSET_NAME }}
+        asset_content_type: application/x-xpinstall
