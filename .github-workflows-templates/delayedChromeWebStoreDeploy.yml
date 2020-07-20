@@ -21,10 +21,15 @@ jobs:
         with:
           ghToken: ${{ secrets.WORKFLOWS_TOKEN }}
 
-      - id: checkoutTag
+      - name: Checkout by tag
+        id: checkoutTag
         uses: actions/checkout@v2
         with:
           ref: ${{ env.DELAYED_JOB_CHECKOUT_REF }}
+
+      - name: Get checked out commit SHA
+        id: getCommitSha
+        run: echo "::set-output name=sha::$(git rev-parse HEAD)"
 
       - name: Pack directory
         id: packExtensionDir
@@ -71,6 +76,8 @@ jobs:
       - id: getRelease
         uses: cardinalby/git-get-release-action@master
         continue-on-error: true
+        with:
+          commitSha: ${{ steps.getCommitSha.outputs.sha }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
 

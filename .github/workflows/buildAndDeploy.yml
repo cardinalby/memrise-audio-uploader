@@ -104,6 +104,7 @@ jobs:
 #      id: ffSignXpi
 #      uses: cardinalby/webext-buildtools-firefox-sign-xpi-action@master
 #      with:
+#        timeoutMs: 300000
 #        zipFilePath: ${{ env.PACKED_ZIP_PATH }}
 #        xpiFilePath: ${{ env.OFFLINE_XPI_PATH }}
 #        jwtIssuer: ${{ secrets.FF_JWT_ISSUER }}
