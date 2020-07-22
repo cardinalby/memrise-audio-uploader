@@ -1,0 +1,49 @@
+name: buildAndDeploy
+
+on:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  build:
+    env:
+      EXTENSION_DIR_PATH: 'extension'
+      PACKED_ZIP_PATH: 'build/extension.zip'
+
+      OFFLINE_CRX_PATH: 'build/extension.offline.crx'
+      OFFLINE_CRX_ASSET_NAME: 'extension.offline.crx'
+
+      OFFLINE_XPI_PATH: 'build/extension.offline.xpi'
+      OFFLINE_XPI_ASSET_NAME: 'extension.offline.xpi'
+
+      WEBSTORE_PUBLISHED_CRX_PATH: 'build/extension.webstore.crx'
+      WEBSTORE_PUBLISHED_CRX_ASSET_NAME: 'extension.webstore.crx'
+
+      DELAYED_CHROME_WEBSTORE_DEPLOY_TAG: 'deploy-to-chrome-webstore'
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: olegtarasov/get-tag@v2
+      id: tagName
+
+    - name: Pack directory
+      id: packExtensionDir
+      uses: cardinalby/webext-buildtools-pack-extension-dir-action@v1
+      with:
+        extensionDir: ${{ env.EXTENSION_DIR_PATH }}
+        zipFilePath: ${{ env.PACKED_ZIP_PATH }}
+
+    - name: Upload to Opera Addons
+      id: operaAddons
+      uses: cardinalby/webext-buildtools-opera-addons-action@master
+      with:
+        zipFilePath: ${{ env.PACKED_ZIP_PATH }}
+        extensionId: ${{ secrets.OPERA_ADDONS_EXTENSION_ID }}
+        email: ${{ secrets.OPERA_ADDONS_EMAIL }}
+        password: ${{ secrets.OPERA_ADDONS_PASSWORD }}
