@@ -28,6 +28,15 @@ class MemriseCourseWordRow {
         }.bind(this), 2500)
     };
 
+    audioCellAddRequestingMsg() {
+        const msgSpan = '<span class="mau-requesting-msg"> Requesting...</span>';
+        this.$audioCell.append(msgSpan);
+
+        return function () {
+            this.$element.find('span.mau-requesting-msg').remove();
+        }.bind(this);
+    };
+
     audioCellAddUploadingMsg() {
         const msgSpan = '<span class="mau-uploading-msg"> Uploading...</span>';
         this.$audioCell.append(msgSpan);

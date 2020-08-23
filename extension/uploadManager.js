@@ -127,6 +127,7 @@ class UploadManager {
     };
 
     uploadForRow(row, languageCode) {
+        const removeRequestingMsg = row.audioCellAddRequestingMsg();
         return new Promise((resolve, reject) =>
         {
             MESSAGES.LOAD_SOUND.send({
@@ -134,6 +135,8 @@ class UploadManager {
                     languageCode: languageCode
                 },
                 async response => {
+                    removeRequestingMsg();
+
                     if (!response || !response.success) {
                         row.audioCellAddErrorMsg();
                         reject();
