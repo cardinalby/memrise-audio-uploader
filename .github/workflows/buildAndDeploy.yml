@@ -92,23 +92,23 @@ jobs:
         extensionId: ${{ secrets.G_EXTENSION_ID }}
         crxFilePath: ${{ env.WEBSTORE_PUBLISHED_CRX_PATH }}
 
-#    - name: Deploy to Firefox Addons
-#      uses: cardinalby/webext-buildtools-firefox-addons-action@master
-#      with:
-#        zipFilePath: ${{ env.PACKED_ZIP_PATH }}
-#        extensionId: ${{ secrets.FF_EXTENSION_ID }}
-#        jwtIssuer: ${{ secrets.FF_JWT_ISSUER }}
-#        jwtSecret: ${{ secrets.FF_JWT_SECRET }}
-#
-#    - name: Sign Firefox xpi for offline distribution
-#      id: ffSignXpi
-#      uses: cardinalby/webext-buildtools-firefox-sign-xpi-action@master
-#      with:
-#        timeoutMs: 300000
-#        zipFilePath: ${{ env.PACKED_ZIP_PATH }}
-#        xpiFilePath: ${{ env.OFFLINE_XPI_PATH }}
-#        jwtIssuer: ${{ secrets.FF_JWT_ISSUER }}
-#        jwtSecret: ${{ secrets.FF_JWT_SECRET }}
+    - name: Deploy to Firefox Addons
+      uses: cardinalby/webext-buildtools-firefox-addons-action@master
+      with:
+        zipFilePath: ${{ env.PACKED_ZIP_PATH }}
+        extensionId: ${{ secrets.FF_EXTENSION_ID }}
+        jwtIssuer: ${{ secrets.FF_JWT_ISSUER }}
+        jwtSecret: ${{ secrets.FF_JWT_SECRET }}
+
+    - name: Sign Firefox xpi for offline distribution
+      id: ffSignXpi
+      uses: cardinalby/webext-buildtools-firefox-sign-xpi-action@master
+      with:
+        timeoutMs: 300000
+        zipFilePath: ${{ env.PACKED_ZIP_PATH }}
+        xpiFilePath: ${{ env.OFFLINE_XPI_PATH }}
+        jwtIssuer: ${{ secrets.FF_JWT_ISSUER }}
+        jwtSecret: ${{ secrets.FF_JWT_SECRET }}
 
     - name: Create Release
       id: createRelease
