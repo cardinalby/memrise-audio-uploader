@@ -11,15 +11,23 @@ class MemriseCourse {
     };
 
     initialize() {
-        const $table = $('table.level-things.table');
-        const $rows = $table.find('tr.thing');
-
-        this.wordsLanguage = $table.find('th.column[data-key="1"]').find('span.txt').text();
-
+        const $tables = $('table.level-things.table');
         this.rows = [];
-        $rows.each((index, $row) => {
-            this.rows.push(new MemriseCourseWordRow($row));
-        });
+        this.wordsLanguage = undefined;
+
+        for (const table of $tables) {
+            const $table = $(table);
+            const $rows = $table.find('tr.thing');
+            const wordsLanguage = $table.find('th.column[data-key="1"]').find('span.txt').text();
+            if (this.wordsLanguage === undefined) {
+                this.wordsLanguage = wordsLanguage;
+            } else if (this.wordsLanguage !== wordsLanguage) {
+                throw new Error('Different languages of levels are not supported');
+            }
+            $rows.each((index, $row) => {
+                this.rows.push(new MemriseCourseWordRow($row));
+            });
+        }
 
         return this.rows;
     };

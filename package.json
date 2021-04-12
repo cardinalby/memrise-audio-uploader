@@ -7,7 +7,7 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@types/jquery": "^3.3.29",
-    "@types/chrome": "latest"
+    "@types/chrome": "latest",
+    "@types/jquery": "^3.5.5"
   }
 }
