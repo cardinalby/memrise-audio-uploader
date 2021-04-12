@@ -143,12 +143,12 @@ jobs:
         asset_name: ${{ env.WEBSTORE_PUBLISHED_CRX_ASSET_NAME }}
         asset_content_type: application/x-chrome-extension
 
-#    - name: Upload offline xpi release asset
-#      uses: actions/upload-release-asset@v1
-#      env:
-#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#      with:
-#        upload_url: ${{ steps.createRelease.outputs.upload_url }}
-#        asset_path: ${{ steps.ffSignXpi.outputs.xpiFilePath }}
-#        asset_name: ${{ env.OFFLINE_XPI_ASSET_NAME }}
-#        asset_content_type: application/x-xpinstall
+    - name: Upload offline xpi release asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.createRelease.outputs.upload_url }}
+        asset_path: ${{ steps.ffSignXpi.outputs.xpiFilePath }}
+        asset_name: ${{ env.OFFLINE_XPI_ASSET_NAME }}
+        asset_content_type: application/x-xpinstall
