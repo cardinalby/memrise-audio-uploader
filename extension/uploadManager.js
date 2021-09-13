@@ -48,16 +48,25 @@ class UploadManager {
             return;
         }
 
-        if (languageCode !== undefined) {
-            return this.autoUploadImpl(rows, languageCode, onProgress);
+        if (languageCode === undefined) {
+            languageCode = this.findLanguageByName(memriseCourse.wordsLanguage);
         }
 
-        const foundLangs = SotLanguageMap.findByName(memriseCourse.wordsLanguage);
+        return this.autoUploadImpl(rows, languageCode, onProgress);
+    }
+
+    findLanguageByName(languageName) {
+        const foundLangs = SotLanguageMap.findByName(languageName);
         if (foundLangs.length === 1) {
-            return this.autoUploadImpl(rows, foundLangs[0].code, onProgress);
+            return foundLangs[0].code;
         }
 
         if (foundLangs.length === 0) {
+            let regexResult = /^(.*?)\s\(.*?\)/.exec(languageName);
+            if (regexResult !== null) {
+                const shortLanguageName = regexResult[1];
+                return this.findLanguageByName(shortLanguageName);
+            }
             throw new Error('Unknown course language: ' + memriseCourse.wordsLanguage);
         }
 
