@@ -64,14 +64,6 @@ jobs:
         extensionId: ${{ secrets.G_EXTENSION_ID }}
         apiAccessToken: ${{ steps.gAccessToken.outputs.accessToken }}
 
-    - name: Publish at Google Web Store
-      id: gWebStorePublish
-      if: steps.gWebStoreUpload.outputs.newVersion
-      uses: cardinalby/webext-buildtools-chrome-webstore-publish-action@master
-      with:
-        extensionId: ${{ secrets.G_EXTENSION_ID }}
-        apiAccessToken: ${{ steps.gAccessToken.outputs.accessToken }}
-
     - name: Schedule delayed Google Web Store uploading/publishing
       if: steps.gWebStoreUpload.outputs.inReviewError == 'true'
       uses: cardinalby/schedule-job-action@v1
@@ -80,9 +72,17 @@ jobs:
         templateYmlFile: '.github-workflows-templates/delayedChromeWebStoreDeploy.yml'
         addTag: ${{ env.DELAYED_CHROME_WEBSTORE_DEPLOY_TAG }}
 
-    - name: Abort on Google Web Store error
+    - name: Abort on Google Web Store upload error
       if: "!steps.gWebStoreUpload.outputs.newVersion && steps.gWebStoreUpload.outputs.inReviewError != 'true'"
       run: exit 1
+
+    - name: Publish at Google Web Store
+      id: gWebStorePublish
+      if: steps.gWebStoreUpload.outputs.newVersion
+      uses: cardinalby/webext-buildtools-chrome-webstore-publish-action@master
+      with:
+        extensionId: ${{ secrets.G_EXTENSION_ID }}
+        apiAccessToken: ${{ steps.gAccessToken.outputs.accessToken }}
 
     - name: Download published crx file
       id: gWebStoreDownloadCrx
