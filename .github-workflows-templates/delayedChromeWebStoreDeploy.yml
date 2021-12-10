@@ -67,13 +67,6 @@ jobs:
         with:
           ghToken: ${{ secrets.WORKFLOWS_TOKEN }}
 
-      - name: Download published crx file
-        id: gWebStoreDownloadCrx
-        uses: cardinalby/webext-buildtools-chrome-webstore-download-crx-action@master
-        with:
-          extensionId: ${{ secrets.G_EXTENSION_ID }}
-          crxFilePath: ${{ env.WEBSTORE_PUBLISHED_CRX_PATH }}
-
       - id: getRelease
         uses: cardinalby/git-get-release-action@master
         continue-on-error: true
@@ -81,6 +74,14 @@ jobs:
           commitSha: ${{ steps.getCommitSha.outputs.sha }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Download published crx file
+        id: gWebStoreDownloadCrx
+        if: steps.getRelease.outcome == 'success'
+        uses: cardinalby/webext-buildtools-chrome-webstore-download-crx-action@master
+        with:
+          extensionId: ${{ secrets.G_EXTENSION_ID }}
+          crxFilePath: ${{ env.WEBSTORE_PUBLISHED_CRX_PATH }}
 
       - name: Upload webstore published crx release asset
         if: steps.getRelease.outcome == 'success'
