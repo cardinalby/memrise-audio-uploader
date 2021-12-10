@@ -5,15 +5,7 @@ on:
 
 jobs:
   repeatChromeReleaseSteps:
-    env:
-      EXTENSION_DIR_PATH: 'extension'
-      PACKED_ZIP_PATH: 'build/extension.zip'
-      WEBSTORE_PUBLISHED_CRX_PATH: 'build/extension.webstore.crx'
-      WEBSTORE_PUBLISHED_CRX_ASSET_NAME: 'extension.webstore.crx'
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [12.x]
     steps:
       - name: Checkout by tag
         id: checkoutTag

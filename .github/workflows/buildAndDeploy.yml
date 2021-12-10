@@ -69,6 +69,11 @@ jobs:
         ghToken: ${{ secrets.WORKFLOWS_TOKEN }}
         templateYmlFile: '.github-workflows-templates/delayedChromeWebStoreDeploy.yml'
         addTag: ${{ env.DELAYED_CHROME_WEBSTORE_DEPLOY_TAG }}
+        copyEnvVariables: |
+          EXTENSION_DIR_PATH
+          PACKED_ZIP_PATH
+          WEBSTORE_PUBLISHED_CRX_PATH
+          WEBSTORE_PUBLISHED_CRX_ASSET_NAME
 
     - name: Abort on Google Web Store upload error
       if: "!steps.gWebStoreUpload.outputs.newVersion && steps.gWebStoreUpload.outputs.inReviewError != 'true'"

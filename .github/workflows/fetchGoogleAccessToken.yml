@@ -6,9 +6,6 @@ on:
 jobs:
   fetchToken:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [12.x]
     steps:
       - uses: cardinalby/google-api-fetch-token-action@v1
         with:
