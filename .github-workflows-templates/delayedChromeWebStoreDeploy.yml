@@ -1,10 +1,10 @@
 name: "delayed-chrome-web-store-deploy"
 on:
   schedule:
-    - cron:  '1 3 */1 * *' # At 03:01 on every day-of-month
+    - cron:  '15 3 */1 * *' # At 03:15 on every day-of-month
 
 jobs:
-  fetchToken:
+  repeatChromeReleaseSteps:
     env:
       EXTENSION_DIR_PATH: 'extension'
       PACKED_ZIP_PATH: 'build/extension.zip'
@@ -15,17 +15,18 @@ jobs:
       matrix:
         node-version: [12.x]
     steps:
-      - name: Remove scheduled job after 100 attempts
-        uses: cardinalby/unschedule-job-action@v1
-        if: github.run_number > 100
-        with:
-          ghToken: ${{ secrets.WORKFLOWS_TOKEN }}
-
       - name: Checkout by tag
         id: checkoutTag
         uses: actions/checkout@v2
+        continue-on-error: true
         with:
           ref: ${{ env.DELAYED_JOB_CHECKOUT_REF }}
+
+      - name: Remove this scheduled job if tag not found or after 30 attempts
+        uses: cardinalby/unschedule-job-action@v1
+        if: steps.checkoutTag.outcome != 'success' || github.run_number > 100
+        with:
+          ghToken: ${{ secrets.WORKFLOWS_TOKEN }}
 
       - name: Get checked out commit SHA
         id: getCommitSha
