@@ -1,0 +1,23 @@
+name: "publish-to-firefox-addons"
+on:
+  workflow_dispatch:
+jobs:
+  pack-dir:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: cardinalby/export-env-action@v1
+      with:
+        envFile: './github/workflows/constants.env'
+
+    - name: Obtain packed zip
+      uses: ./.github/workflows/actions/get-zip-asset
+
+    - name: Deploy to Firefox Addons
+      uses: cardinalby/webext-buildtools-firefox-addons-action@v1
+      with:
+        zipFilePath: ${{ env.ZIP_FILE_PATH }}
+        extensionId: ${{ secrets.FF_EXTENSION_ID }}
+        jwtIssuer: ${{ secrets.FF_JWT_ISSUER }}
+        jwtSecret: ${{ secrets.FF_JWT_SECRET }}

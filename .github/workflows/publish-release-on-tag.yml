@@ -1,0 +1,70 @@
+name: Create/use release and publish on stores
+on:
+  push:
+    tags:
+      - '*.*.*'
+  workflow_dispatch:
+jobs:
+  build-release-publish:
+    if: github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: cardinalby/export-env-action@v1
+      with:
+        envFile: './github/workflows/constants.env'
+
+    - name: Look for existing release
+      id: getRelease
+      uses: cardinalby/git-get-release-action@v1
+      continue-on-error: true
+      with:
+        tag: ${{ github.ref_name }}
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+
+    - name: Build, test and pack to zip
+      id: buildPack
+      if: steps.getRelease.upload_url
+      uses: ./.github/workflows/actions/build-test-pack
+
+    - name: Create Release
+      id: createRelease
+      if: steps.buildPack.outputs.zipAssetId
+      uses: ncipollo/release-action@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        draft: 'true'
+
+    - name: Upload ${{ env.ZIP_FILE_NAME }} asset to the release
+      if: steps.createRelease.outcome == 'success'
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.createRelease.outputs.upload_url }}
+        asset_path: ${{ env.ZIP_FILE_PATH }}
+        asset_name: ${{ env.ZIP_FILE_NAME }}
+        asset_content_type: application/zip
+
+    # Should trigger build-assets-on-release.yml
+    - name: Publish release
+      if: steps.createRelease.outcome == 'success'
+      uses: eregon/publish-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        release_id: ${{ steps.createRelease.outputs.id }}
+
+    - uses: aurelien-baudet/workflow-dispatch@v2
+      with:
+        workflow: publish-to-chrome-webstore
+        token: ${{ secrets.WORKFLOWS_TOKEN }}
+        wait-for-completion: false
+
+    - uses: aurelien-baudet/workflow-dispatch@v2
+      with:
+        workflow: publish-to-firefox-addons
+        token: ${{ secrets.WORKFLOWS_TOKEN }}
+        wait-for-completion: false
