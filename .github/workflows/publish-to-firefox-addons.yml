@@ -9,7 +9,7 @@ jobs:
 
     - uses: cardinalby/export-env-action@v1
       with:
-        envFile: './github/workflows/constants.env'
+        envFile: './.github/workflows/constants.env'
 
     - name: Obtain packed zip
       uses: ./.github/workflows/actions/get-zip-asset
