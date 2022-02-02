@@ -43,6 +43,7 @@ jobs:
       - uses: cardinalby/export-env-action@v1
         with:
           envFile: './.github/workflows/constants.env'
+          expand: true
 
       - name: Obtain packed zip
         id: getZipAsset
@@ -109,6 +110,7 @@ jobs:
       - uses: cardinalby/export-env-action@v1
         with:
           envFile: './.github/workflows/constants.env'
+          expand: true
 
       - name: Download published crx file
         id: gWebStoreDownloadCrx

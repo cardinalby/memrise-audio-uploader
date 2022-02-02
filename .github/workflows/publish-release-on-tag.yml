@@ -14,6 +14,7 @@ jobs:
     - uses: cardinalby/export-env-action@v1
       with:
         envFile: './.github/workflows/constants.env'
+        expand: true
 
     - name: Look for existing release
       id: getRelease

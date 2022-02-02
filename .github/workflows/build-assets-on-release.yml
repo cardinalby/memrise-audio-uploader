@@ -23,6 +23,7 @@ jobs:
       - uses: cardinalby/export-env-action@v1
         with:
           envFile: './.github/workflows/constants.env'
+          expand: true
 
       - name: Find out "extension.zip" asset id from the release
         id: getZipAssetId
@@ -59,6 +60,7 @@ jobs:
       - uses: cardinalby/export-env-action@v1
         with:
           envFile: './.github/workflows/constants.env'
+          expand: true
 
       - name: Download ${{ env.ZIP_ASSET_NAME }} release asset
         uses: cardinalby/download-release-asset-action@v1
@@ -92,6 +94,7 @@ jobs:
       - uses: cardinalby/export-env-action@v1
         with:
           envFile: './.github/workflows/constants.env'
+          expand: true
 
       - name: Download ${{ env.ZIP_ASSET_NAME }} release asset
         uses: cardinalby/download-release-asset-action@v1
