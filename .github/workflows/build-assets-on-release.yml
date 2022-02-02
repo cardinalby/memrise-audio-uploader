@@ -84,7 +84,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ github.event.upload_url }}
+          upload_url: ${{ github.event.release.upload_url }}
           asset_path: ${{ env.OFFLINE_CRX_FILE_PATH }}
           asset_name: ${{ env.OFFLINE_CRX_FILE_NAME }}
           asset_content_type: application/x-chrome-extension
@@ -122,7 +122,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ github.event.upload_url }}
+          upload_url: ${{ github.event.release.upload_url }}
           asset_path: ${{ env.XPI_FILE_PATH }}
           asset_name: ${{ env.XPI_FILE_NAME }}
           asset_content_type: application/x-xpinstall

@@ -1,4 +1,4 @@
-name: Publish on Firefox Add-ons
+name: publish-on-firefox-add-ons
 on:
   workflow_dispatch:
 jobs:

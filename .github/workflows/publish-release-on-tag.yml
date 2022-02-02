@@ -58,14 +58,14 @@ jobs:
       with:
         release_id: ${{ steps.createRelease.outputs.id }}
 
-    - uses: aurelien-baudet/workflow-dispatch@v2
+    - uses: benc-uk/workflow-dispatch@v1
       with:
-        workflow: publish-to-chrome-webstore.yml
+        workflow: publish-to-chrome-web-store
         token: ${{ secrets.WORKFLOWS_TOKEN }}
         wait-for-completion: false
 
     - uses: aurelien-baudet/workflow-dispatch@v2
       with:
-        workflow: publish-to-firefox-addons.yml
+        workflow: publish-on-chrome-web-store
         token: ${{ secrets.WORKFLOWS_TOKEN }}
         wait-for-completion: false
