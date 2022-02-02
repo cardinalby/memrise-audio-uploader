@@ -54,18 +54,18 @@ jobs:
       if: steps.getRelease.outcome != 'success'
       uses: eregon/publish-release@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.WORKFLOWS_TOKEN }}
       with:
         release_id: ${{ steps.createRelease.outputs.id }}
 
     - uses: aurelien-baudet/workflow-dispatch@v2
       with:
-        workflow: publish-to-chrome-webstore
+        workflow: publish-to-chrome-webstore.yml
         token: ${{ secrets.WORKFLOWS_TOKEN }}
         wait-for-completion: false
 
     - uses: aurelien-baudet/workflow-dispatch@v2
       with:
-        workflow: publish-to-firefox-addons
+        workflow: publish-to-firefox-addons.yml
         token: ${{ secrets.WORKFLOWS_TOKEN }}
         wait-for-completion: false
