@@ -62,7 +62,7 @@ jobs:
           envFile: './.github/workflows/constants.env'
           expand: true
 
-      - name: Download ${{ env.ZIP_ASSET_NAME }} release asset
+      - name: Download zip release asset
         uses: cardinalby/download-release-asset-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -96,7 +96,7 @@ jobs:
           envFile: './.github/workflows/constants.env'
           expand: true
 
-      - name: Download ${{ env.ZIP_ASSET_NAME }} release asset
+      - name: Download zip release asset
         uses: cardinalby/download-release-asset-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}

@@ -27,19 +27,19 @@ jobs:
 
     - name: Build, test and pack to zip
       id: buildPack
-      if: steps.getRelease.upload_url
+      if: steps.getRelease.outcome != 'success'
       uses: ./.github/workflows/actions/build-test-pack
 
     - name: Create Release
       id: createRelease
-      if: steps.buildPack.outputs.zipAssetId
+      if: steps.getRelease.outcome != 'success'
       uses: ncipollo/release-action@v1
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         draft: 'true'
 
-    - name: Upload ${{ env.ZIP_FILE_NAME }} asset to the release
-      if: steps.createRelease.outcome == 'success'
+    - name: Upload zip asset to the release
+      if: steps.getRelease.outcome != 'success'
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -51,7 +51,7 @@ jobs:
 
     # Should trigger build-assets-on-release.yml
     - name: Publish release
-      if: steps.createRelease.outcome == 'success'
+      if: steps.getRelease.outcome != 'success'
       uses: eregon/publish-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

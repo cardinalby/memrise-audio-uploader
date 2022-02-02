@@ -29,7 +29,7 @@ runs:
         tag: ${{ github.ref_name }}
         doNotFailIfNotFound: true
 
-    - name: Find out ${{ env.ZIP_ASSET_NAME }} asset id from assets JSON
+    - name: Find out zip asset id from assets JSON
       if: steps.getRelease.outputs.assets
       id: readAssetIdFromRelease
       uses: cardinalby/js-eval-action@v1
@@ -41,7 +41,7 @@ runs:
           JSON.parse(env.ASSETS_JSON)
             .find(asset => asset.name == env.ZIP_ASSET_NAME)?.id || ''
 
-    - name: Download found ${{ env.ZIP_ASSET_NAME }} release asset
+    - name: Download found zip release asset
       id: downloadZipAsset
       if: steps.readAssetIdFromRelease.outputs.result
       uses: cardinalby/download-release-asset-action@v1
@@ -50,7 +50,7 @@ runs:
         assetId: ${{ steps.readAssetIdFromRelease.outputs.result }}
         targetPath: ${{ env.ZIP_FILE_PATH }}
 
-    - name: Build ${{ env.ZIP_FILE_NAME }}
+    - name: Build and pack zip
       id: buildZip
       if: steps.downloadZipAsset.outcome !== 'success'
       uses: ./.github/workflows/actions/build-test-pack
