@@ -29,6 +29,7 @@ jobs:
         id: getZipAssetId
         uses: cardinalby/js-eval-action@v1
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ASSETS_URL: ${{ github.event.release.assets_url }}
           ASSET_NAME: ${{ env.ZIP_ASSET_NAME }}
         with:

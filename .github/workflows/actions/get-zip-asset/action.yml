@@ -56,7 +56,7 @@ runs:
 
     - name: Build and pack zip
       id: buildZip
-      if: steps.downloadZipAsset.outcome !== 'success'
+      if: steps.downloadZipAsset.outcome != 'success'
       uses: ./.github/workflows/actions/build-test-pack
 
     - name: Upload zip file artifact
