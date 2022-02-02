@@ -31,7 +31,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ASSETS_URL: ${{ github.event.release.assets_url }}
-          ASSET_NAME: ${{ env.ZIP_ASSET_NAME }}
+          ASSET_NAME: ${{ env.ZIP_FILE_NAME }}
         with:
           expression: |
             (await octokit.request("GET " + env.ASSETS_URL)).data
