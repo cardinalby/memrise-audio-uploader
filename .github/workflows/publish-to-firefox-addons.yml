@@ -14,6 +14,8 @@ jobs:
 
     - name: Obtain packed zip
       uses: ./.github/workflows/actions/get-zip-asset
+      with:
+        githubToken: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Deploy to Firefox Addons
       uses: cardinalby/webext-buildtools-firefox-addons-action@v1

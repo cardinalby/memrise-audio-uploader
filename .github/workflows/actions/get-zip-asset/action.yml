@@ -12,6 +12,10 @@
 
 name: "Obtain extension.zip asset"
 description: "Downloads zip asset from a release (if exists) or builds it from the scratch"
+inputs:
+  githubToken:
+    description: GitHub token
+    required: true
 outputs:
   releaseUploadUrl:
     description: Release upload url, if exists
@@ -24,7 +28,7 @@ runs:
       if: github.ref_type == 'tag'
       uses: cardinalby/git-get-release-action@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ inputs.githubToken }}
       with:
         tag: ${{ github.ref_name }}
         doNotFailIfNotFound: true
@@ -46,7 +50,7 @@ runs:
       if: steps.readAssetIdFromRelease.outputs.result
       uses: cardinalby/download-release-asset-action@v1
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ inputs.githubToken }}
         assetId: ${{ steps.readAssetIdFromRelease.outputs.result }}
         targetPath: ${{ env.ZIP_FILE_PATH }}
 

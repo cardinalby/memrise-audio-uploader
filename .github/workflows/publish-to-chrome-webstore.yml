@@ -48,6 +48,8 @@ jobs:
       - name: Obtain packed zip
         id: getZipAsset
         uses: ./.github/workflows/actions/get-zip-asset
+        with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Fetch Google API access token
         id: fetchAccessToken

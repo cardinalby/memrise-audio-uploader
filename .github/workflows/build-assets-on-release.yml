@@ -33,7 +33,7 @@ jobs:
           ASSET_NAME: ${{ env.ZIP_ASSET_NAME }}
         with:
           expression: |
-            (await octokit.request("GET " + env.ASSETS_URL)).data
+            (await octokit.rest.request("GET " + env.ASSETS_URL)).data
               .find(asset => asset.name == env.ASSET_NAME)?.id || ''
 
       - name: Build, test and pack
