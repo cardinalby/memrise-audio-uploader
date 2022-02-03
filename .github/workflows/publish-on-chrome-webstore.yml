@@ -90,13 +90,16 @@ jobs:
 
       - name: Abort on unrecoverable upload error
         if: |
-          !steps.webStoreUpload.outputs.newVersion && 
-          steps.webStoreUpload.outputs.inReviewError != 'true'
+          !steps.webStoreUpload.outputs.newVersion &&
+          steps.webStoreUpload.outputs.inReviewError != 'true' &&
+          steps.webStoreUpload.outputs.sameVersionAlreadyUploadedError != 'true'
         run: exit 1
 
       - name: Publish on Google Web Store
         id: webStorePublish
-        if: steps.webStoreUpload.outputs.newVersion
+        if: |
+          steps.webStoreUpload.outputs.newVersion ||
+          steps.webStoreUpload.outputs.sameVersionAlreadyUploadedError == 'true'
         uses: cardinalby/webext-buildtools-chrome-webstore-publish-action@v1
         with:
           extensionId: ${{ secrets.G_EXTENSION_ID }}
