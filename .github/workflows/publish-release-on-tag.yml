@@ -59,14 +59,14 @@ jobs:
         release_id: ${{ steps.createRelease.outputs.id }}
 
     - uses: benc-uk/workflow-dispatch@v1
-      if: "!contains(github.event.head_commit.message, '[chrome skip]')"
+      if: "!contains(github.event.head_commit.message, '[skip chrome]')"
       with:
         workflow: publish-on-chrome-web-store
         token: ${{ secrets.WORKFLOWS_TOKEN }}
         wait-for-completion: false
 
     - uses: aurelien-baudet/workflow-dispatch@v2
-      if: "!contains(github.event.head_commit.message, '[firefox skip]')"
+      if: "!contains(github.event.head_commit.message, '[skip firefox]')"
       with:
         workflow: publish-on-firefox-add-ons
         token: ${{ secrets.WORKFLOWS_TOKEN }}
