@@ -108,6 +108,7 @@ jobs:
 
       - name: Sign Firefox xpi for offline distribution
         id: ffSignXpi
+        continue-on-error: true
         uses: cardinalby/webext-buildtools-firefox-sign-xpi-action@v1
         with:
           timeoutMs: 1200000
@@ -117,7 +118,14 @@ jobs:
           jwtIssuer: ${{ secrets.FF_JWT_ISSUER }}
           jwtSecret: ${{ secrets.FF_JWT_SECRET }}
 
+      - name: Abort on sign error
+        if: |
+          steps.ffSignXpi.outcome == 'failure' &&
+          steps.ffSignXpi.outputs.sameVersionAlreadyUploadedError != 'true'
+        run: exit 1
+
       - name: Upload offline xpi release asset
+        if: steps.ffSignXpi.outcome == 'success'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
