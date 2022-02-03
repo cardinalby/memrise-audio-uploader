@@ -60,12 +60,12 @@ jobs:
 
     - uses: benc-uk/workflow-dispatch@v1
       with:
-        workflow: publish-to-chrome-web-store
+        workflow: publish-on-chrome-web-store
         token: ${{ secrets.WORKFLOWS_TOKEN }}
         wait-for-completion: false
 
     - uses: aurelien-baudet/workflow-dispatch@v2
       with:
-        workflow: publish-on-chrome-web-store
+        workflow: publish-on-firefox-add-ons
         token: ${{ secrets.WORKFLOWS_TOKEN }}
         wait-for-completion: false
