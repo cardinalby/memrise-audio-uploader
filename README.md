@@ -7,7 +7,7 @@
 [![Touch google token](https://github.com/cardinalby/memrise-audio-uploader/actions/workflows/touch-google-refresh-token.yml/badge.svg)](https://github.com/cardinalby/memrise-audio-uploader/actions/workflows/touch-google-refresh-token.yml)
 
 # Memrise Audio Uploader
-Chrome extension which allows you upload sounds of words and phrases prononsiation from http://soundoftext.com to http://memrise.com course
+Chrome extension which allows you to upload sounds of words and phrases pronunciation from http://soundoftext.com to http://memrise.com course
 
 ## Install from the stores
 [Chrome Web Store](https://chrome.google.com/webstore/detail/memrise-audio-uploader/fonhjbpoimjmgfgbboichngpjlmilbmk)
