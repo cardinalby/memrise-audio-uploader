@@ -5,7 +5,12 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/workflows/actions/checkout
+      - uses: actions/checkout@v2
+
+      - uses: cardinalby/export-env-action@v1
+        with:
+          envFile: './.github/workflows/constants.env'
+          expand: true
 
       - name: Obtain packed zip
         uses: ./.github/workflows/actions/get-zip-asset

@@ -38,7 +38,12 @@ jobs:
               return attempt < max ? attempt + 1 : '';
             }
 
-      - uses: ./.github/workflows/actions/checkout
+      - uses: actions/checkout@v2
+
+      - uses: cardinalby/export-env-action@v1
+        with:
+          envFile: './.github/workflows/constants.env'
+          expand: true
 
       - name: Obtain packed zip
         id: getZipAsset
@@ -105,7 +110,12 @@ jobs:
     if: needs.publish-on-webstore.outputs.result == 'success'
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/workflows/actions/checkout
+      - uses: actions/checkout@v2
+
+      - uses: cardinalby/export-env-action@v1
+        with:
+          envFile: './.github/workflows/constants.env'
+          expand: true
 
       - name: Download published crx file
         id: gWebStoreDownloadCrx

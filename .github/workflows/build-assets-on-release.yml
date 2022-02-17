@@ -18,7 +18,12 @@ jobs:
         ${{ steps.getZipAssetId.outputs.result || 
             steps.uploadZipAsset.outputs.id }}
     steps:
-      - uses: ./.github/workflows/actions/checkout
+      - uses: actions/checkout@v2
+
+      - uses: cardinalby/export-env-action@v1
+        with:
+          envFile: './.github/workflows/constants.env'
+          expand: true
 
       - name: Find out "extension.zip" asset id from the release
         id: getZipAssetId
@@ -53,7 +58,12 @@ jobs:
     needs: ensure-zip
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/workflows/actions/checkout
+      - uses: actions/checkout@v2
+
+      - uses: cardinalby/export-env-action@v1
+        with:
+          envFile: './.github/workflows/constants.env'
+          expand: true
 
       - name: Download zip release asset
         uses: cardinalby/download-release-asset-action@v1
@@ -84,7 +94,12 @@ jobs:
     needs: ensure-zip
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/workflows/actions/checkout
+      - uses: actions/checkout@v2
+
+      - uses: cardinalby/export-env-action@v1
+        with:
+          envFile: './.github/workflows/constants.env'
+          expand: true
 
       - name: Download zip release asset
         uses: cardinalby/download-release-asset-action@v1
