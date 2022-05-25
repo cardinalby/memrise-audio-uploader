@@ -10,7 +10,6 @@
   "background": {
     "scripts": [
       "compatibility.js",
-      "jquery-3.6.0.min.js",
       "messages.js",
       "soundOfText/soundOfText.js"
     ]

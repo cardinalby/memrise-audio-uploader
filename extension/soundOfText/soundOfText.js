@@ -18,18 +18,19 @@ function getSoundOfText(word, languageCode)
      * @param {number} msec
      * @returns Promise
      */
-    function delay(msec) {
+    async function delay(msec) {
         return new Promise(resolve => {
             setTimeout(resolve, Math.max(0, msec));
         });
     }
 
-    function postText() {
-        return $.ajax({
-            url: SOUND_OF_TEXT_API_URL + '/sounds',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({
+    async function postText() {
+        const response = await fetch(SOUND_OF_TEXT_API_URL + '/sounds',{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
                 data: {
                     text: word,
                     voice: languageCode
@@ -37,6 +38,10 @@ function getSoundOfText(word, languageCode)
                 engine: 'Google'
             })
         });
+        if (response.ok) {
+            return response.json();
+        }
+        throw new Error(`Error ${response.status} posting a word to ${SOUND_OF_TEXT_API_URL}. ` + await response.text());
     }
 
     /**
@@ -57,50 +62,43 @@ function getSoundOfText(word, languageCode)
      * @param {string} soundId
      * @return {Promise<string>}
      */
-    function getSoundFileUrl(soundId) {
-        return $.get(SOUND_OF_TEXT_API_URL + '/sounds/' + soundId)
-            .then(data => {
-                switch (data.status) {
-                    case 'Done':
-                        return Promise.resolve(data.location);
-                    case 'Error':
-                        return Promise.reject(new Error(data.message));
-                    case 'Pending':
-                        return delay(1000).then(() => getSoundFileUrl(soundId));
-                    default:
-                        return Promise.reject(new Error('Unknown status: ' + data.status));
-                }
-            });
+    async function getSoundFileUrl(soundId) {
+        const response = await fetch(SOUND_OF_TEXT_API_URL + '/sounds/' + soundId);
+        if (!response.ok) {
+            throw new Error(`Error ${response.status} requesting a ${soundId} sound status. ` + await response.text());
+        }
+        const data = await response.json();
+        switch (data.status) {
+            case 'Done':
+                return Promise.resolve(data.location);
+            case 'Error':
+                return Promise.reject(new Error(data.message));
+            case 'Pending':
+                await delay(1000);
+                return getSoundFileUrl(soundId)
+            default:
+                return Promise.reject(new Error('Unknown status: ' + data.status));
+        }
     }
 
     /**
      * @param {string} url
      * @return {Promise<Blob>}
      */
-    function loadSoundFile(url) {
-        return new Promise((resolve, reject) => {
-            const xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function() {
-                if (this.readyState === 4) {
-                    if (this.status === 200) {
-                        resolve(this.response);
-                    } else {
-                        reject(new Error('Sound file download error: ' + this.status));
-                    }
-                }
-            };
+    async function loadSoundFile(url) {
 
-            xhr.open('GET', url);
-            xhr.responseType = 'blob';
-            xhr.send();
-        });
+        const response = await fetch(url);
+        if (response.ok) {
+            return response.blob();
+        }
+        throw new Error(`Error ${response.status} downloading sound from ${url}.`);
     }
 
     /**
      * @param {Blob} blob
      * @return {Promise<Base64File>}
      */
-    function seriazlizeBlob(blob) {
+    function serializeBlob(blob) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.onload = function() {
@@ -117,7 +115,7 @@ function getSoundOfText(word, languageCode)
         .then(getSoundId)
         .then(getSoundFileUrl)
         .then(loadSoundFile)
-        .then(seriazlizeBlob);
+        .then(serializeBlob);
 }
 
 MESSAGES.LOAD_SOUND.subscribe((request, sender, sendResponse) => {
