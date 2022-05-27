@@ -12,14 +12,14 @@ class MauMessage {
     /**
      * @param {object} [options]
      * @param {function} [response]
+     * @return {Promise<any>}
      */
     send(options, response) {
         const message = options === undefined
             ? {}
             : options;
         message.name = this.name;
-
-        chrome.runtime.sendMessage(message, response);
+        return new Promise(resolve => chrome.runtime.sendMessage(message, resolve));
     };
 
     /**

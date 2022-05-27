@@ -8,6 +8,6 @@
   "license": "MIT",
   "devDependencies": {
     "@types/chrome": "latest",
-    "@types/jquery": "^3.5.5"
+    "@types/jquery": "^3.5.14"
   }
 }

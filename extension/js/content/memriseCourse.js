@@ -6,18 +6,25 @@ class MemriseCourse {
         /** @type {string} */
         this.wordsLanguage = undefined;
         this.middlewareToken = undefined;
-
-        this._grabMemriseToken();
     };
 
-    initialize() {
-        const $tables = $('table.level-things.table');
+    async initialize() {
+        this.middlewareToken = await this._grabMemriseToken();
+
+        // course levels tab
+        let $tables = $('table.level-things.table');
+        if (!$tables.length) {
+            // databases tab
+            $tables = $('table.pool-things');
+        }
+
         this.rows = [];
         this.wordsLanguage = undefined;
 
         for (const table of $tables) {
             const $table = $(table);
             const $rows = $table.find('tr.thing');
+
             const wordsLanguage = $table.find('th.column[data-key="1"]').find('span.txt').text();
             if (this.wordsLanguage === undefined) {
                 this.wordsLanguage = wordsLanguage;
@@ -70,17 +77,30 @@ class MemriseCourse {
         });
     };
 
-    _grabMemriseToken() {
-        document.addEventListener('mau-set-memrise-token', function (event) {
-            this.middlewareToken = event.detail;
-        }.bind(this));
+    /**
+     * @return {Promise<string>}
+     * @private
+     */
+    async _grabMemriseToken() {
+        function injectGrabbingScriptToThePage() {
+            const th = document.getElementsByTagName('body')[0];
+            const s = document.createElement('script');
+            s.setAttribute('type', 'text/javascript');
+            s.setAttribute('src', chrome.runtime.getURL('js/content/pageInjectedScript.js'));
+            th.appendChild(s);
+        }
 
-        const th = document.getElementsByTagName('body')[0];
-        const s = document.createElement('script');
-        s.setAttribute('type', 'text/javascript');
-        s.setAttribute('src', chrome.runtime.getURL('pageInjectedScript.js'));
-        th.appendChild(s);
+        return new Promise((resolve, reject) => {
+            const rejectTimeout = setTimeout(reject, 1500);
+
+            const eventListener = event => {
+                document.removeEventListener('mau-set-memrise-token', eventListener);
+                clearTimeout(rejectTimeout);
+                resolve(event.detail);
+            };
+            document.addEventListener('mau-set-memrise-token', eventListener);
+
+            injectGrabbingScriptToThePage();
+        });
     };
 }
-
-memriseCourse = new MemriseCourse();

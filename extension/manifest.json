@@ -3,35 +3,37 @@
   "name": "Memrise Audio Uploader",
   "author": "cardinalby",
   "description": "Uploads audio for words in your course",
-  "version": "1.2.9",
+  "version": "1.3.0",
   "icons": {
     "128": "images/mainIcon128.png"
   },
   "background": {
     "scripts": [
-      "compatibility.js",
-      "messages.js",
-      "soundOfText/soundOfText.js"
+      "js/compatibility.js",
+      "js/messages.js",
+      "js/background/soundOfText/getSoundOfText.js",
+      "js/background/background.js"
     ]
   },
   "content_scripts": [{
     "js": [
-      "compatibility.js",
-      "jquery-3.6.0.min.js",
-      "memrise/memriseCourse.js",
-      "memrise/memriseCourseWordRow.js",
-      "messages.js",
-      "uploadManager.js",
-      "soundOfText/languages.js",
-      "autoUploadBtn.js"
+      "js/compatibility.js",
+      "js/3rdParty/jquery-3.6.0.min.js",
+      "js/content/memriseCourse.js",
+      "js/content/memriseCourseWordRow.js",
+      "js/messages.js",
+      "js/content/uploadManager.js",
+      "js/content/soundOfText/languages.js",
+      "js/content/autoUploadBtn.js"
     ],
     "matches": [
-      "https://app.memrise.com/course/*/edit/*"
+      "https://app.memrise.com/course/*/edit/*",
+      "https://app.memrise.com/course/*/edit/database/*"
     ],
     "run_at": "document_end"
   }],
   "web_accessible_resources": [
-    "pageInjectedScript.js"
+    "js/content/pageInjectedScript.js"
   ],
   "permissions": [
     "https://app.memrise.com/*",
