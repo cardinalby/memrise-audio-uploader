@@ -18,7 +18,7 @@ jobs:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy to Edge Addons
-        uses: wdzeng/edge-addon@fe088a3bb9bf7c3f1cab08df6269664b9f7bf4fd # @v1.0.3
+        uses: wdzeng/edge-addon@fe088a3bb9bf7c3f1cab08df6269664b9f7bf4fd # pin@v1.0.3
         with:
           product-id: ${{ secrets.EDGE_PRODUCT_ID }}
           zip-path: ${{ env.ZIP_FILE_PATH }}
