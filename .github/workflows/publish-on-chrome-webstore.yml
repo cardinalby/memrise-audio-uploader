@@ -20,7 +20,7 @@ jobs:
     environment: ${{ github.event.inputs.environment }}
     outputs:
       result: ${{ steps.webStorePublish.outcome }}
-      releaseUploadUrl: ${{ steps.getZipAsset.releaseUploadUrl }}
+      releaseUploadUrl: ${{ steps.getZipAsset.outputs.releaseUploadUrl }}
     steps:
       - name: Get the next attempt number
         id: getNextAttemptNumber
