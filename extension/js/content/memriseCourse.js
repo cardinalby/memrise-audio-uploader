@@ -71,7 +71,7 @@ class MemriseCourse {
                 }
             };
 
-            xhr.open('POST', 'https://app.memrise.com/ajax/thing/cell/upload_file/');
+            xhr.open('POST', window.location.origin + '/ajax/thing/cell/upload_file/');
             xhr.processData = false;
             xhr.send(data);
         });

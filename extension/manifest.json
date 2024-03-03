@@ -3,7 +3,7 @@
   "name": "Memrise Audio Uploader",
   "author": "cardinalby",
   "description": "Uploads audio for words in your course",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "icons": {
     "128": "images/mainIcon128.png"
   },
