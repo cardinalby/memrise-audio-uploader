@@ -3,7 +3,7 @@
   "name": "Memrise Audio Uploader",
   "author": "cardinalby",
   "description": "Uploads audio for words in your course",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "icons": {
     "128": "images/mainIcon128.png"
   },
@@ -28,7 +28,9 @@
     ],
     "matches": [
       "https://app.memrise.com/course/*/edit/*",
-      "https://app.memrise.com/course/*/edit/database/*"
+      "https://app.memrise.com/course/*/edit/database/*",
+      "https://community-courses.memrise.com/course/*/edit/*",
+      "https://community-courses.memrise.com/course/*/edit/database/*"
     ],
     "run_at": "document_end"
   }],
@@ -37,6 +39,7 @@
   ],
   "permissions": [
     "https://app.memrise.com/*",
+    "https://community-courses.memrise.com/*",
     "https://translate.google.com/*"
   ]
 }
