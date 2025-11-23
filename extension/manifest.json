@@ -4,6 +4,14 @@
     "author": "cardinalby",
     "description": "Uploads audio for words in your course",
     "version": "1.4.3",
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "{570c3f3b-dcd0-4fc1-bfed-faa0ef2a3409}",
+            "data_collection_permissions": {
+                "required": ["none"]
+            }
+        }
+    },
     "icons": {
         "128": "images/mainIcon128.png"
     },
