@@ -6,22 +6,36 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: "webextension"
 
-      - uses: cardinalby/export-env-action@v1
+      - uses: cardinalby/export-env-action@v2
         with:
           envFile: './.github/workflows/constants.env'
           expand: true
 
-      - name: Obtain packed zip
-        uses: ./.github/workflows/actions/get-zip-asset
+      - name: Build for Chrome
+        run: npm run build_chrome
+
+      - name: Pack to zip
+        uses: cardinalby/webext-buildtools-pack-extension-dir-action@v1
         with:
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          extensionDir: ${{ env.EXTENSION_DIST_DIR }}
+          zipFilePath: ${{ env.ZIP_FILE_PATH }}
 
       - name: Deploy to Edge Addons
-        uses: wdzeng/edge-addon@fe088a3bb9bf7c3f1cab08df6269664b9f7bf4fd # pin@v1.0.3
+        id: addonsDeploy
+        uses: wdzeng/edge-addon@v2
+        continue-on-error: true
         with:
           product-id: ${{ secrets.EDGE_PRODUCT_ID }}
           zip-path: ${{ env.ZIP_FILE_PATH }}
+          api-key: ${{ secrets.EDGE_API_KEY }}
           client-id: ${{ secrets.EDGE_CLIENT_ID }}
-          client-secret: ${{ secrets.EDGE_CLIENT_SECRET }}
-          access-token-url: ${{ secrets.EDGE_ACCESS_TOKEN_URL }}
+
+      - name: Abort on upload error
+        if: steps.addonsDeploy.outcome != 'success'
+        run: echo "Probably the API key is expired, renew it on https://partner.microsoft.com/en-us/dashboard/microsoftedge/publishapi and update the EDGE_API_KEY secret" && exit 1

@@ -6,16 +6,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: "webextension"
 
-      - uses: cardinalby/export-env-action@v1
+      - uses: cardinalby/export-env-action@v2
         with:
           envFile: './.github/workflows/constants.env'
           expand: true
 
-      - name: Obtain packed zip
-        uses: ./.github/workflows/actions/get-zip-asset
+      - name: Build for Firefox
+        run: npm run build_firefox
+
+      - name: Pack to zip
+        uses: cardinalby/webext-buildtools-pack-extension-dir-action@v1
         with:
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          extensionDir: ${{ env.EXTENSION_DIST_DIR }}
+          zipFilePath: ${{ env.ZIP_FILE_PATH }}
+
+      - name: Pack sources for review
+        run: bash pack_sources_for_review.sh
 
       - name: Deploy to Firefox Addons
         id: addonsDeploy
@@ -23,6 +35,7 @@ jobs:
         continue-on-error: true
         with:
           zipFilePath: ${{ env.ZIP_FILE_PATH }}
+          sourcesZipFilePath: ${{ env.SOURCES_ZIP_FILE_PATH }}
           extensionId: ${{ secrets.FF_EXTENSION_ID }}
           jwtIssuer: ${{ secrets.FF_JWT_ISSUER }}
           jwtSecret: ${{ secrets.FF_JWT_SECRET }}

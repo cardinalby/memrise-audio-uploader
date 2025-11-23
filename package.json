@@ -6,6 +6,10 @@
     "url": "https://github.com/cardinalby/memrise-audio-uploader.git"
   },
   "license": "MIT",
+  "scripts": {
+    "build_chrome": "node scripts/build.js --target chrome",
+    "build_firefox": "node scripts/build.js --target firefox"
+  },
   "devDependencies": {
     "@types/chrome": "latest",
     "@types/jquery": "^3.5.14"

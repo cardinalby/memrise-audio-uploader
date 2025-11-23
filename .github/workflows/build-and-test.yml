@@ -3,30 +3,26 @@ on:
   pull_request:
   push:
     branches:
-      - 'master'
-      - 'develop'
+      - '*'
   workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: "webextension"
 
-      - uses: cardinalby/export-env-action@v1
+      - uses: cardinalby/export-env-action@v2
         with:
           envFile: './.github/workflows/constants.env'
           expand: true
 
-      - name: Build, test and pack to zip
-        id: build
-        uses: ./.github/workflows/actions/build-test-pack
-        with:
-          # pack zip only for pull requests or workflow_dispatch events
-          doNotPackZip: ${{ github.event_name == 'push' && 'true' || 'false'}}
+      - name: Build for Chrome
+        run: npm run build_chrome
 
-      - name: Upload zip file artifact
-        if: github.event_name != 'push'
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ env.ZIP_FILE_NAME }}
-          path: ${{ env.ZIP_FILE_PATH }}
+      - name: Build for Firefox
+        run: npm run build_firefox
